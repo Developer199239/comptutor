@@ -1,35 +1,61 @@
 package com.example.comptutor;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.lang.reflect.Member;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class admindashboard extends AppCompatActivity {
-    StorageReference storageReference;
-    DatabaseReference databaseReference;
-    private ImageButton guideButton;
+    FloatingActionButton mAddFab, addNewClassFab, deleteClassFab;
+    TextView addNewClassFabText, deleteClassFabText;
+    Boolean isAllFabsVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admindashboard);
-        guideButton = findViewById(R.id.guideBtn);
-        guideButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openGuide = new Intent(getApplicationContext(),videoTutorialPage.class);
-                startActivity(openGuide);
+        initView();
+    }
+
+    private void initView() {
+        initFab();
+    }
+
+    private void initFab(){
+        mAddFab = findViewById(R.id.addClass);
+        addNewClassFab = findViewById(R.id.addNewClassFab);
+        deleteClassFab = findViewById(R.id.deleteClassFab);
+        addNewClassFabText = findViewById(R.id.addNewClassFabText);
+        deleteClassFabText = findViewById(R.id.deleteClassFabText);
+        addNewClassFab.setVisibility(View.GONE);
+        deleteClassFab.setVisibility(View.GONE);
+        addNewClassFabText.setVisibility(View.GONE);
+        deleteClassFabText.setVisibility(View.GONE);
+        isAllFabsVisible = false;
+        mAddFab.setOnClickListener(view -> {
+            if (!isAllFabsVisible) {
+                addNewClassFab.show();
+                deleteClassFab.show();
+                addNewClassFabText.setVisibility(View.VISIBLE);
+                deleteClassFabText.setVisibility(View.VISIBLE);
+                isAllFabsVisible = true;
+            } else {
+                addNewClassFab.hide();
+                deleteClassFab.hide();
+                addNewClassFabText.setVisibility(View.GONE);
+                deleteClassFabText.setVisibility(View.GONE);
+                isAllFabsVisible = false;
             }
         });
-
-        }
+        deleteClassFab.setOnClickListener(
+                view -> Toast.makeText(admindashboard.this, "Delete", Toast.LENGTH_SHORT
+                ).show());
+        addNewClassFab.setOnClickListener(
+                view -> Toast.makeText(admindashboard.this, "Add Class", Toast.LENGTH_SHORT
+                ).show());
+    }
 }

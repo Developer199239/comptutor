@@ -1,30 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".admindashboard">
-    <TextView
-        android:layout_gravity="center"
+    tools:context=".admindashboard"
+    android:background="@color/black"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolBar"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivLogout"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_admin_logout" />
+
+        <ImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_notification"
+            app:tint="@color/tool_bar_icon"
+            android:adjustViewBounds="true"
+            />
+
+        <ImageView
+            android:id="@+id/ivCodeGenerator"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivNotification"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_code_generator"
+            app:tint="@color/tool_bar_icon"
+            android:adjustViewBounds="true"
+            />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivCodeGenerator"
+            app:layout_constraintStart_toEndOf="@+id/ivLogout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_admin"
+            app:tint="@color/tool_bar_icon"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolBar" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addClass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="WELCOME ADMIN"
-        />
-    <ImageButton
-        android:id="@+id/guideBtn"
-        android:layout_width="133dp"
-        android:layout_height="118dp"
-        android:layout_above="@+id/simulationTxt"
-        android:layout_below="@+id/guidestxt"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="131dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="139dp"
-        android:layout_marginBottom="6dp"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/guide" />
+        android:layout_gravity="end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_plus"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addNewClassFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/addClass"
+        app:layout_constraintEnd_toEndOf="@+id/addClass"
+        app:layout_constraintStart_toStartOf="@+id/addClass"
+        app:srcCompat="@drawable/ic_group" />
+
+    <TextView
+        android:id="@+id/addNewClassFabText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="New Class"
+        android:textStyle="bold"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toBottomOf="@+id/addNewClassFab"
+        app:layout_constraintEnd_toStartOf="@+id/addNewClassFab"
+        app:layout_constraintTop_toTopOf="@+id/addNewClassFab" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deleteClassFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toTopOf="@+id/addNewClassFab"
+        app:layout_constraintEnd_toEndOf="@+id/addNewClassFab"
+        app:layout_constraintStart_toStartOf="@+id/addNewClassFab"
+        app:srcCompat="@drawable/ic_delete" />
+
+    <TextView
+        android:id="@+id/deleteClassFabText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Delete Class"
+        android:textStyle="bold"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toBottomOf="@+id/deleteClassFab"
+        app:layout_constraintEnd_toStartOf="@+id/deleteClassFab"
+        app:layout_constraintTop_toTopOf="@+id/deleteClassFab" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

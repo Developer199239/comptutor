@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Reverify">
+    <TextView
+        android:id="@+id/verifyTxtMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Please Verify Your Email Address"
+        android:textSize="20sp"
+        android:textStyle="bold"
+         />
+
+    <Button
+        android:id="@+id/verifyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/verifyTxtMessage"
+        android:layout_centerHorizontal="true"
+        android:text="Resend Verification Link" />
+
+    <Button
+        android:id="@+id/loginPageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/verifyBtn"
+        android:layout_alignStart="@+id/verifyBtn"
+        android:layout_alignEnd="@+id/verifyBtn"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="602dp"
+        android:text="Go Back to Login Page" />
+
+</RelativeLayout>

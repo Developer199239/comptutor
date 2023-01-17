@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Keyboard"
+        android:icon="@drawable/keyboard"
+        android:id="@+id/keyboardFragment"
+        />
+    <item android:title="Mouse"
+        android:icon="@drawable/mousewithoutbg"
+        android:id="@+id/mouseFragment"
+        />
+    <item android:title="CPU"
+        android:icon="@drawable/cpu"
+        android:id="@+id/cpuFragment"
+        />
+</menu>

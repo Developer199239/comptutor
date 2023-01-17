@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Sound Card"
+        android:icon="@drawable/soundcard"
+        android:id="@+id/soundCardFragment"
+        />
+    <item android:title="Hard Disk Drive"
+        android:icon="@drawable/hdd"
+        android:id="@+id/hddFragment"
+        />
+    <item android:title="Solid State Drive (SSD)"
+        android:icon="@drawable/ssd"
+        android:id="@+id/ssdFragment"
+        />
+    <item android:title="Power Supply Unit (PSU)"
+        android:icon="@drawable/psu"
+        android:id="@+id/psuFragment"
+        />
+    <item android:title="Monitor or Visual Display Unit (VDU)"
+        android:icon="@drawable/monitor"
+        android:id="@+id/monitorFragment"
+        />
+
+</menu>

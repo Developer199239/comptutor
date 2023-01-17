@@ -1,0 +1,268 @@
+<resources>
+    <string name="app_name">CompTutor</string>
+    <string name="systemCase">
+        \n\n
+        This is the part that holds all of the parts of a computer to make up the computer system.
+        It is usually designed in such a manner to make fitting a motherboard, wiring, and drives as easy as possible.
+        Cases come in all different sizes and shapes to accommodate various types of computer components and satisfy the consumer’s needs
+        Computer cases rely on computer fans inside them to create proper airflow to keep all the internal parts cool and working reliably.
+        A computer case, like most things, varies in quality. You can get them made from cheap metals or good quality materials that provide you with a sturdy design.\
+        \n\n
+        List of computer case sizes (known as form factor):
+        \n\n
+        Very small form factor: Supports Mini ITX motherboards
+        \n\n
+        Small form factor: Supports micro ATX motherboards.
+        \n\n
+        Standard form factor: Supports standard ATX motherboards.
+        \n\n
+        Larger form factors: Supports ATX and XL-ATX motherboards.
+        \n\n
+    </string>
+    <string name="motherBoard">
+        \n\n
+        The motherboard is the main board that is screwed directly inside the computer case. All other cards and everything else plugs directly into the motherboard, hence its name.
+        The CPU, RAM, drives, power supply, and more are connected to it.
+        Its function involves integrating all the physical components to communicate and operate together.
+        Motherboards come in the following sizes:
+        \n\n
+        Pico-ITX	 3.9 inch x 2.9 inch | 100mm x 72mm
+        \n\n
+        Nano-ITX	 4.7 inch x 4.7 inch | 120mm x 120mm
+        \n\n
+        Mini-ITX	 6.7 inch x 6.7 inch | 170mm x 170mm
+        \n\n
+        Micro-ATX	 9.6 inch x 9.6 inch | 244mm x 244mm
+        \n\n
+        Standard-ATX 12 inch x 9.6 inch | 305mm x 244mm
+        \n\n
+        XL-ATX EVGA: 13.5 inch x 10.3 inch | 343mm x 262mm
+        \n\n
+        Gigabyte:    13.58 inch x 10.31 inch | 345mm x 262mm
+        \n\n
+        Micro-Star:  13.6 inch x 10.4 inch | 345mm x 264mm
+    </string>
+    <string name="cpu">
+        \n\n
+        The CPU or central processing unit is basically like the brain of computer systems. It processes all the information on a computational level.
+    It takes all the processes from the RAM and processes it to perform the tasks required by the computer system.
+    The central processing unit is usually seated in a socket that utilizes a lever or a latch with a hinged plate with a cut out in the center to secure the central processing unit onto the motherboard.
+    It has many copper pads underneath it for the socket contacts to push up against them to make electrical contact.
+    There are other ways CPUs can be attached to the motherboard.
+        \n\n
+        Here are some common examples:
+        \n\n
+    ZIF (Zero Insertion Force): A lever-operated mechanism to clamp the pins of the processor.
+        \n\n
+    PGA (Pin Grid Array): It is also a ZIF socket but has a different pin pitch and contains a different pin count.
+        \n\n
+    LGA (Land Grid Array): More commonly found on motherboards today. A levered hinged plate with a center cut-out clamps down on the processor.
+        \n\n
+    BGA (Ball Grid Array): The central processing unit is soldered directly onto the motherboard. This makes it a non-user swappable part. It is susceptible to bad connectivity.\n\n
+    A processor generates a decent amount of heat, especially when it is working under high loads.
+        \n\n
+        There are so many different types of computer processors. The top manufacturers of processors are Intel, AMD, and NVidia.
+    </string>
+    <string name="ram">
+        \n\n
+        RAM or random access memory is a data storage device that can provide fast read and write access. RAM is volatile memory, meaning it loses all the stored data when power is lost.
+    \n\n
+    The RAM keeps data ready for the CPU to process. The RAM speed is a big contributor to the overall speed of a computer system.
+    \n\n
+    It plugs directly into a long slot that has contacts on either side of the slot.
+    \n\n
+    It, too, has a clock speed, just like a processor. So, it can also be overclocked to deliver increased performance beyond the intended specification.
+    \n\n
+    Certain RAM modules are sold with a heat spreader. It helps dissipate the heat from the individual memory ICs, keeping them cooler.
+    \n\n
+    RAM has evolved like any other component. RAM used on the motherboard often uses DDR (Double Data Rate) SDRAM (Synchronous Dynamic Random Access Memory) type memory.
+    \n\n
+    RAM Amount always comes in powers of 2, so you will always see numbers like 16GB, 32GB, or 64GB of RAM, to mention some examples of memory units.
+    </string>
+    <string name="graphicsCard">
+        \n\n
+        A graphics card is an output device that processes the data from the motherboard and sends the appropriate information to the computer’s screen for display.
+    You can connect monitors to it using HDMI, DisplayPort, DVI, or VGA connectors.
+    It can also be referred to as a video or display card.
+    A video card takes the burden of all the video processing from the main CPU. This gives a computer a big boost in performance.
+    Because of the large processing requirements for a gaming GPU, fans are almost a given.
+        \n\n
+    A video card plugs into a PCI Express (Peripheral Component Interconnect Express) slot on the motherboard. It is a serial expansion bus slot capable of high bandwidth in two directions.
+    A graphics card has a GPU (Graphics Processing Unit), the main part of a computer system that requires cooling.
+    A graphics processing unit is slower than a CPU but is designed to deal with mathematical operations required for video rendering.
+        \n\n
+        The card’s memory amount varies depending on the manufacturer’s design.
+    Video cards use GDDR (Graphics Double Data Rate) SDRAM, which is specially designed to optimize graphics performance.
+    GDDR is built to handle a higher bandwidth compared to plain DDR ram.
+    </string>
+    <string name="soundCard">
+        \n\n
+        Most of the time, the sound chip built into the motherboard is used for audio output.
+    But, if you are a sound enthusiast or prefer high-quality audio output while playing a game, you might be inclined to use a sound card.
+    Sound cards plug into a computer in multiple ways.
+        \n\n
+        It can be through USB, PCI slot, or PCI Express x 1 slot.
+    External DACs have gained much more popularity and help deliver clearer and more defined audio or high-definition sound output.
+        They connect up using an IO cable like a USB cable to your computer or laptop and provide a line out for your speakers or headphones.
+        A sound processing chip on the card does all of the audio processing and is usually not a very powerful processor.
+        A sound card can offer a wide range of connectivity with various audio equipment.
+        A few examples could be optical audio, 1/4 inch jack, or RCA connectors.
+    </string>
+    <string name="hardDrive">
+        \n\n
+        A hard drive is still found in most computers to this day. It’s usually a mechanical drive that stores all the data.
+    Apart from storing data, it can also be used as a boot drive to run the operating system from it. You can install operating systems of many different kinds depending on your needs.
+    An operating system is a software program that’s installed, making a computer useable like Microsoft Windows, for example. The biggest vulnerability of a mechanical drive is its physically fragile nature.
+    One bump the wrong way can destroy a whole drive. A mechanical hard drive contains one or more platters that spin anywhere between 5200 to 10000 RPM (revolutions per minute).
+    The read and write heads are spaced only about 0.002 (51 micro M) inches away from the platter.
+    This gives you an idea about the physical limitations regarding its fragile nature.
+    Small areas on the platter can be arranged to represent a 1 or a 0. It can be changed using the drive head to alter the material to represent the correct value magnetically. This is how to write data to the drive for storage.
+    There are various categories of hard drives made for various real-world applications.
+        \n\n
+    Some examples include:
+    \n\n
+    General use for desktops or laptop computers, General high capacity storage, NAS Devices, Servers and Video recording.
+
+    </string>
+    <string name="ssd">
+    An SSD is also a type of hard drive, but it doesn’t have any moving parts. It consists of a bank of flash memory that can hold a reasonable amount of data.
+    While SSDs are increasing in size all the time, they aren’t cost-effective for storing large amounts of data.
+        \n\n
+        A mechanical drive has a cheaper gigabyte to dollar ratio.
+    However, the SSD is a high-performance drive. It’s fast and cannot be as easily damaged by dropping it or taking a few bumps.
+    SSDs are available as 2.5-inch laptop encapsulated drives as well as an M.2 SDD as the most commonly used kinds on the market.
+    That’s why I always recommend SSDs for portable-type computers where possible. In our other article, you can read more about whether or not SSD’s are worth it.
+    </string>
+    <string name="psu">
+        A power supply unit mounts inside the computer case. This converts the AC mains supply from the power cord from a wall socket and supplies the correct DC voltages to all the components inside the computer.
+        \n\n
+        A computer power supply supplies the following voltages:
+        \n\n
++3.3    : This voltage is supplied to the motherboard.
+        \n\n
++5V:    : This voltage is supplied to the motherboard and other computer hardware.
+        \n\
++12V    : This voltage is supplied to the motherboard and other components.
+        \n\
+-12V    : This voltage is supplied to the motherboard.
+        \n\n
+It plays an important role in keeping a computer running reliably.
+You get different wattage ratings for power supplies. The higher the wattage, the higher the electrical current that can be made available to many other parts that need it in order to function properly.
+The higher you go in Watts, the more the power supply will be likely to cost.
+        \n\n
+
+        \n\n\n
+
+        \n\n\n
+
+        \n\n
+
+    </string>
+    <string name="monitor">
+        \n\n
+        A monitor is an output device used to visualize the graphics data sent from the computer’s GPU.
+    There are various types of monitors on the market. A LED (Light Emitting Diode) backlit LCD (Liquid Crystal Display) monitor is the most commonly used with modern computers.
+    There are also various computer screen sizes with different aspect ratios. The aspect ratio is simply the ratio between height and width.
+    For example, a 16:9 aspect ratio computer screen will have 16 parts wide to 9 parts in height.
+    There are also curved monitors, but they are more expensive computer screens.
+    Monitors also have a fast response time to keep up with the high demands required to eliminate delays with user input for gaming.
+    </string>
+    <string name="keyboard">
+        \n\n
+        A keyboard is an input device that is one of the ways to communicate with a computer. Typing a key from the keyboard sends a small portion of data to tell the computer which key was pressed.
+    Once the computer receives input from the keyboard, it can use the keystrokes in digital form to produce a specific task in any software that’s being used.
+    The computer system can use this information in many ways. An example could be a command or a character that can be used in a document.
+        There are two main different types of keyboards. Mechanical and membrane types.
+    </string>
+    <string name="mouse">
+        \n\n
+        A mouse is an input device that allows the user to move a pointer displayed on the monitor and experience a more intuitive interaction with computer systems.
+    These days mice have more buttons than the common three.
+    However, the three main buttons allow the user to select, grab, scroll and access extra menus and options.
+    A computer mouse is a handy pointing device can be wired or wireless. The latter obviously requires batteries.
+    Optical mice of today allow for very accurate precision and smooth movement.
+    </string>
+    <string name="motherboardComponents">
+        \n\n
+    1. PCI SLOT (Peripheral Component Interconnect) : PCI slots are used to Insert or install Add-on cards, such as LAN cards, Sound cards, Capture cards and TV tuner cards. There are usually anywhere from 1 to 6 PCI slots available on the motherboard(above board has 2 PCI slots. ), they have decreased in number and are being replaced by the PCI Express 1x slots
+        \n\n
+    2. PCI-E 16x Slot : the most common slot for Graphics cards, the PCI Express 16x slots provides 16 separate lanes or data transfer. These are the 16x speed versions, which are currently the fastest. PCI-E16x allows up to 4 GB/s of peak bandwidth per direction, and up to 8 GB/s concurrent bandwidth.
+        \n\n
+    3. PCI-E 1x Slot : Single slot - In the PCIe 1.x generation, each lane (1x) carries 250 MB/s compared to 133 MB/s for the PCI slots. These can be used for expansion cards such as Sound Cards, or Ethernet Cards.\
+        \n\n
+    4. Northbridge: This allows communication between the CPU and the system memory and PCI-E slots. It is a focal Point of Motherboard and It is also called as Memory Controller Hub.
+        \n\n
+    5. ATX 12V 2X and 4 Pin Power Connection : This is one of two power connections that supply power to the .motherboard This connection will come from your Power Supply.
+        \n\n
+    6. CPU-Fan Connection: This is where the CPU fan will connect. Using this connection over one fof the power supply will allow the motherboard to control the speed of the fan, based on the CPU temperature.
+        \n\n
+    7. Socket: This is where the CPU will plug in. The orange bracket that is surrounding it is used for high end heat sinks. It helps to support the weight of the heat sink.
+        \n\n
+    8. DIMM slots: DIMMs are by far and away the most used memory types in todays computers. They vary in speeds and standards however and they need to match up to what your motherboard has been designed to take. The four standards of DIMMs being used at the moment are SDR (Single Data Rate), DDR (Double Data Rate), DDR2 and DDR3. The speeds of memory can vary between 66Mhz to 1600Mhz.
+        \n\n
+    9. ATX Power Connector: This is the second of two power connections. This is the main power connection for the motherboard, and comes from the Power Supply.
+        \n\n
+    10. IDE connectors or PATA connectors : IDE full form is Integrated Device Electronics. it supports IDE devices, such as Hard disks and CD and DVD drives. Most drives today come with SATA connections.
+        \n\n
+    11. Southbridge: This is the controller for components such as the PCI slots, onboard audio, and USB connections.
+        \n\n
+    12. SATA Connections : SATA full form is Serial Advanced Technology Attachment. These are connect with serial ATA devices, such as Hard disk drives and CD or DVD drives.
+        \n\n
+    13. Front Panel Connections: this is where we will hook in the connections from the case. These are mostly the different lights on the case, such as power on, hard drive activity etc.
+        \n\n
+    14. FDD Connection: The FDD is the Floppy Disk controller. Floppy Drive Connector is used to connect floppy drives. It supports two floppy drives.
+        \n\n
+    15. External USB Connections: There are usually a couple of these ports located on each motherboard used for connecting pen drives and external hard drives, like Ipods or Mp3 players.
+        \n\n
+    16. CMOS battery :This is the motherboard battery, which is used to power the south bridge and the BIOS to save the setting, data and time.
+    </string>
+    <string name="motherboardBackPanel">
+        \n\n
+    1. RJ-45 (Registered Jack 45) LAN port : This port allows connection to a Local Area Network (LAN) through a network hub using a RJ-45 cable.
+        \n\n
+    2. Analog Audio port :This port connects a tape, CD, DVD player or other audio soures.
+        \n\n
+    3. VGA Port(Video Graphics Array) :VGA cables carry an analog signal as opposed to a digital signal (ones and zeroes). Using higher frequencies, it\'s possible to reach a relatively high range of video resolutions. However, video quality directly responds to cable quality, and doubly so on higher resolutions. Due to this, the quality of a VGA image can variate notable across different makes of cables.
+        \n\n
+    4. USB (Universal Serial Bus) 2.0 Ports: There are usually a couple of these ports located on each motherboard used for connecting pen drives and external hard drives, like Ipods or Mp3 players.
+        \n\n
+    5. PS/2 Keyboard Port (purple) :This port is for a PS/2 keyboard
+        \n\n
+    6. PS/2 mouse port (green):This port is for a PS/2 mouse.
+        \n\n
+    7. 1394a Port : this port is used to connect to any firewire device. FireWire has largely been supplanted by USB. Some professional audio hardware still uses FireWire, though; you may also occasionally find higher-speed IEEE 1394b headers, but they are even rarer.
+        \n\n
+    8. Optical S/PDIF Used for sound connections to home audio receivers or powered PC speakers with optical connections.
+        \n\n
+    9. eSATA port(External Serial Advanced Technology Attachment): It is an external interface for SATA technologies. It competes with FireWire 400 and universal serial bus (USB) 2.0 to provide fast data transfer speeds for external storage devices.
+        \n\n
+    10. HDMI Connector(High-Definition Multimedia Interface):HDMI is a digital interface for transmitting audio and video data in a single cable. It is supported by most HDTVs and related components, such as DVD and Blu-ray players, cable boxes, and video game systems.
+        \n\n
+    11. DVI (Digital Visual Interface) connector : It is used to send digital information from a computer to a digital display, such as a flat-panel LCD monitor.
+        \n\n
+    12. North Bridge : The northbridge typically handles communications among the CPU, in some cases RAM, and PCI Express (or AGP) video cards, and the southbridge. Northbridge is directly connected to AGP video, thus providing higher transfer rates.
+        \n\n
+    13. South Bridge : The southbridge is one of the two chips in the core logic chipset on a personal computer (PC) motherboard, the other being the northbridge.
+    The southbridge typically implements the slower capabilities of the motherboard in a northbridge/southbridge chipset computer architecture.
+    A southbridge chipset handles all of a computers I/O functions, such as USB, audio, serial, the system BIOS, the ISA bus, the interrupt controller and the IDE channels.
+        \n\n
+
+        \n\n
+
+        \n\n
+
+        \n\n
+
+        \n\n
+
+
+    </string>
+    <string name="title_activity_pc_assembly_simulation2">pcAssemblySimulation2</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".pcAssemblySimulation2">
+
+    <RelativeLayout
+        android:id="@+id/rlChasis"
+        android:layout_width="409dp"
+        android:layout_height="592dp"
+        android:background="@drawable/chasisas"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/rlItems2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <RelativeLayout
+            android:id="@+id/motherboardHolder"
+            android:layout_width="wrap_content"
+            android:layout_height="345dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="82dp"
+            android:layout_marginEnd="145dp"
+            android:layout_marginBottom="165dp"
+            android:gravity="center" />
+
+        <RelativeLayout
+            android:id="@+id/psuHolder"
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="43dp"
+            android:layout_marginTop="451dp"
+            android:layout_marginEnd="250dp"
+            android:layout_marginBottom="51dp"
+            android:gravity="center" />
+
+        <RelativeLayout
+            android:id="@+id/hddHolder"
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="222dp"
+            android:layout_marginTop="305dp"
+            android:layout_marginEnd="71dp"
+            android:layout_marginBottom="197dp"
+            android:gravity="center" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlItems2"
+        android:layout_width="411dp"
+        android:layout_height="143dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <RelativeLayout
+                    android:id="@+id/motherboardItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+
+                    <ImageView
+                        android:id="@+id/dragMotherboard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/fullmotherboardparts" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/psuItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+                    <ImageView
+                        android:adjustViewBounds="true"
+                        android:id="@+id/dragPsu"
+                        android:layout_width="200dp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/powersupplysideview" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/hddItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+                    <ImageView
+                        android:id="@+id/draghdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/hddsimulation" />
+                </RelativeLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

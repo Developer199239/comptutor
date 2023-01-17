@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Chasis"
+        android:icon="@drawable/chasis"
+        android:id="@+id/chasisFragment"
+        />
+    <item android:title="Motherboard"
+        android:icon="@drawable/motherboard"
+        android:id="@+id/motherboardFragment"
+        />
+    <item android:title="Motherboard Components"
+        android:icon="@drawable/motherboardcomponents"
+        android:id="@+id/motherboardComponentsFragment"
+        />
+    <item android:title="RAM"
+        android:icon="@drawable/ram"
+        android:id="@+id/ramFragment"
+        />
+    <item android:title="GPU"
+        android:icon="@drawable/gpufrontsimulation"
+        android:id="@+id/gpuFragment"
+        />
+
+</menu>

@@ -1,5 +1,6 @@
 package com.example.comptutor;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -54,8 +55,6 @@ public class admindashboard extends AppCompatActivity {
         deleteClassFab.setOnClickListener(
                 view -> Toast.makeText(admindashboard.this, "Delete", Toast.LENGTH_SHORT
                 ).show());
-        addNewClassFab.setOnClickListener(
-                view -> Toast.makeText(admindashboard.this, "Add Class", Toast.LENGTH_SHORT
-                ).show());
+        addNewClassFab.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(),AddClassActivity.class)));
     }
 }

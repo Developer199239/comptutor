@@ -38,9 +38,6 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        startActivity(new Intent(getApplicationContext(),admindashboard.class));
-
         mauth=FirebaseAuth.getInstance();
         mStore = FirebaseFirestore.getInstance();
         mail=findViewById(R.id.loginEmail);

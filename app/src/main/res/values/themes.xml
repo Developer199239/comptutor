@@ -22,4 +22,13 @@
     <style name="Theme.CompTutor.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.CompTutor.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="inputFieldTheme" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/red</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="android:backgroundTint">@color/transparent</item>
+        <item name="backgroundColor">#fbfbfb</item>
+        <item name="hintTextColor">@color/red</item>
+    </style>
 </resources>

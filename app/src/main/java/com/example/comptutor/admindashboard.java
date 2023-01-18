@@ -38,23 +38,31 @@ public class admindashboard extends AppCompatActivity {
         deleteClassFabText.setVisibility(View.GONE);
         isAllFabsVisible = false;
         mAddFab.setOnClickListener(view -> {
-            if (!isAllFabsVisible) {
-                addNewClassFab.show();
-                deleteClassFab.show();
-                addNewClassFabText.setVisibility(View.VISIBLE);
-                deleteClassFabText.setVisibility(View.VISIBLE);
-                isAllFabsVisible = true;
-            } else {
-                addNewClassFab.hide();
-                deleteClassFab.hide();
-                addNewClassFabText.setVisibility(View.GONE);
-                deleteClassFabText.setVisibility(View.GONE);
-                isAllFabsVisible = false;
-            }
+            fabAction();
         });
         deleteClassFab.setOnClickListener(
                 view -> Toast.makeText(admindashboard.this, "Delete", Toast.LENGTH_SHORT
                 ).show());
-        addNewClassFab.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(),AddClassActivity.class)));
+
+        addNewClassFab.setOnClickListener(view -> {
+            fabAction();
+            startActivity(new Intent(getApplicationContext(),AddClassActivity.class));
+        });
+    }
+
+    private void fabAction(){
+        if (!isAllFabsVisible) {
+            addNewClassFab.show();
+            deleteClassFab.show();
+            addNewClassFabText.setVisibility(View.VISIBLE);
+            deleteClassFabText.setVisibility(View.VISIBLE);
+            isAllFabsVisible = true;
+        } else {
+            addNewClassFab.hide();
+            deleteClassFab.hide();
+            addNewClassFabText.setVisibility(View.GONE);
+            deleteClassFabText.setVisibility(View.GONE);
+            isAllFabsVisible = false;
+        }
     }
 }

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.comptutor.utils.SessionHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,6 +39,8 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        startActivity(new Intent(getApplicationContext(),admindashboard.class));
+
         mauth=FirebaseAuth.getInstance();
         mStore = FirebaseFirestore.getInstance();
         mail=findViewById(R.id.loginEmail);
@@ -133,6 +136,7 @@ public class Login extends AppCompatActivity {
                 Log.d("TAG","OnSuccess" + documentSnapshot.getData());
                 if(documentSnapshot.getString("isTeacher")!=null)
                 {
+                    new SessionHelper(Login.this).setStringValue(SessionHelper.USER_ID, uid);
                     startActivity(new Intent(getApplicationContext(),admindashboard.class));
                 }
                 else if (documentSnapshot.getString("isStudent")!= null)

@@ -2,9 +2,14 @@ package com.example.comptutor.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.webkit.MimeTypeMap
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 
@@ -28,4 +33,8 @@ fun removeFragmentFromBackStack(fm : FragmentManager, tagName: String){
             break
         }
     }
+}
+
+fun ImageView.setTint(@ColorRes colorRes: Int) {
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(ContextCompat.getColor(context, colorRes)))
 }

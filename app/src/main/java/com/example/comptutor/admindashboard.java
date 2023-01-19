@@ -64,6 +64,9 @@ public class admindashboard extends AppCompatActivity {
         ivCodeGenerator.setOnClickListener(view -> {
             generateClassKey();
         });
+        classInfoLayout.setOnClickListener(view -> {
+            startActivity(new Intent(this, ClassHomeActivity.class));
+        });
         initFab();
     }
 

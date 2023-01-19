@@ -1,6 +1,7 @@
 package com.example.comptutor.utils
 
 class ClassModel(
+    var classId: String = "",
     var teacherId: String = "",
     var title: String = "",
     var code: String = "",

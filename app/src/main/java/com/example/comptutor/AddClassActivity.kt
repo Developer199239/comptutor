@@ -32,8 +32,10 @@ class AddClassActivity : AppCompatActivity() {
         }
         binding.ivSave.setOnClickListener {
             if(validationCheck()) {
+                val classId = "${sessionHelper.getStringValue(SessionHelper.USER_ID)}_${System.currentTimeMillis()}"
                 val databaseReference = FirebaseDatabase.getInstance().reference
                 val classModel = ClassModel(
+                    classId = classId,
                     teacherId = sessionHelper.getStringValue(SessionHelper.USER_ID),
                     title = binding.etTitle.text.toString(),
                     code = binding.etCode.text.toString(),
@@ -41,7 +43,7 @@ class AddClassActivity : AppCompatActivity() {
                     color = delfaultColor,
                     description = binding.etDescription.text.toString(),
                 )
-                databaseReference.child(AppConstants.CLASS_TABLE).setValue(classModel).addOnSuccessListener {
+                databaseReference.child(AppConstants.CLASS_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID)).setValue(classModel).addOnSuccessListener {
                     "Class add success".toast(this)
                     finish()
                 }.addOnFailureListener {

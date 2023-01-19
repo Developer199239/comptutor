@@ -9,3 +9,7 @@ class AssignStudentModel(
     var studentId: String = "",
     var isSelected: Boolean = false,
 )
+
+class AssignStudentResultSet(
+    var result : ArrayList<AssignStudentModel> = arrayListOf()
+)

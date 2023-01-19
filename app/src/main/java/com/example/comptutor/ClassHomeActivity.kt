@@ -36,6 +36,15 @@ class ClassHomeActivity : AppCompatActivity() {
         binding.rvStudent.layoutManager = LinearLayoutManager(this)
         binding.rvStudent.itemAnimator = DefaultItemAnimator()
         binding.rvStudent.setHasFixedSize(true)
+
+        binding.ivUser.setOnClickListener {
+            val dialog = AssignStudentDialog.newInstance()
+            dialog.isCancelable = false
+            dialog.show(
+                supportFragmentManager,
+                AssignStudentDialog::class.java.canonicalName
+            )
+        }
     }
 
     private fun fetchStudentList(){
@@ -56,10 +65,15 @@ class ClassHomeActivity : AppCompatActivity() {
                 studentListAdapter = StudentListAdapter(studentsList,this)
                 binding.rvStudent.adapter = studentListAdapter
                 studentListAdapter.notifyDataSetChanged()
+                ComptutorApplication.studentsList = studentsList
             }
             .addOnFailureListener { e ->
                 materialProgress.dismiss()
                 e.message!!.toast(this)
+                studentListAdapter = StudentListAdapter(arrayListOf(),this)
+                binding.rvStudent.adapter = studentListAdapter
+                studentListAdapter.notifyDataSetChanged()
+                ComptutorApplication.studentsList.clear()
             }
     }
 }

@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.comptutor.utils.AppConstants;
 import com.example.comptutor.utils.ClassModel;
+import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.GenerateKeyModel;
 import com.example.comptutor.utils.MaterialProgress;
 import com.example.comptutor.utils.SessionHelper;
@@ -65,6 +66,7 @@ public class admindashboard extends AppCompatActivity {
             generateClassKey();
         });
         classInfoLayout.setOnClickListener(view -> {
+            ComptutorApplication.Companion.setClassModel(classModel);
             startActivity(new Intent(this, ClassHomeActivity.class));
         });
         initFab();

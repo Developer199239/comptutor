@@ -178,6 +178,7 @@ public class admindashboard extends AppCompatActivity {
                     appleSnapshot.getRef().removeValue();
                 }
                 deleteCode();
+                deleteAssignedStudent();
             }
 
             @Override
@@ -206,6 +207,23 @@ public class admindashboard extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 materialProgress.dismiss();
                 showToast(databaseError.getMessage());
+            }
+        });
+    }
+
+    private void deleteAssignedStudent() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        Query applesQuery = ref.child(AppConstants.ASSIGN_STUDENT_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID));
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }

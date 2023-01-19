@@ -37,12 +37,25 @@ class ClassHomeActivity : AppCompatActivity() {
         binding.rvStudent.itemAnimator = DefaultItemAnimator()
         binding.rvStudent.setHasFixedSize(true)
 
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
         binding.ivUser.setOnClickListener {
             val dialog = AssignStudentDialog.newInstance()
             dialog.isCancelable = false
             dialog.show(
                 supportFragmentManager,
                 AssignStudentDialog::class.java.canonicalName
+            )
+        }
+
+        binding.ivVideo.setOnClickListener {
+            val dialog = EmbeddVideoLinkDialog.newInstance()
+            dialog.isCancelable = false
+            dialog.show(
+                supportFragmentManager,
+                EmbeddVideoLinkDialog::class.java.canonicalName
             )
         }
     }

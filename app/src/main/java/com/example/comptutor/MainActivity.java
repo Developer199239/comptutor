@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
+import com.example.comptutor.utils.BaseActivity;
 import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.SessionHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,7 +54,7 @@ import java.io.IOException;
 
 import kotlin.math.UMathKt;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     FirebaseAuth mauth;
     FirebaseFirestore fdb;
     String userID;

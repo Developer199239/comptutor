@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun Any.toast(context: Context, duration: Int = Toast.LENGTH_SHORT): Toast {
     return Toast.makeText(context, this.toString(), duration).apply { show() }
@@ -37,4 +39,14 @@ fun removeFragmentFromBackStack(fm : FragmentManager, tagName: String){
 
 fun ImageView.setTint(@ColorRes colorRes: Int) {
     ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(ContextCompat.getColor(context, colorRes)))
+}
+
+fun currentDataInString(): String {
+    return System.currentTimeMillis().epochToDateString("yyyy/MM/dd HH:mm:ss a")!!
+}
+
+fun Long.epochToDateString(formatString: String?): String? {
+    val sdf = SimpleDateFormat(formatString, Locale.getDefault())
+    sdf.timeZone = TimeZone.getDefault()
+    return sdf.format(this)
 }

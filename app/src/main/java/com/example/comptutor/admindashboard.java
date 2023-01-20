@@ -3,6 +3,7 @@ package com.example.comptutor;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +21,10 @@ import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.GenerateKeyModel;
 import com.example.comptutor.utils.MaterialProgress;
 import com.example.comptutor.utils.SessionHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +32,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class admindashboard extends AppCompatActivity {
+    String TAG  = "admindashboard";
     FloatingActionButton mAddFab, addNewClassFab, deleteClassFab;
     TextView addNewClassFabText, deleteClassFabText;
     Boolean isAllFabsVisible;
@@ -40,7 +45,7 @@ public class admindashboard extends AppCompatActivity {
     private ConstraintLayout classInfoLayout;
     private TextView classTitle;
     private ClassModel classModel;
-    private ImageView ivCodeGenerator;
+    private ImageView ivCodeGenerator, ivLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +58,24 @@ public class admindashboard extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         fetchData();
+        ComptutorApplication.Companion.uploadTokenInServer();
     }
 
     private void initView() {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         materialProgress = new MaterialProgress(this);
         sessionHelper = new SessionHelper(getApplicationContext());
+        ivLogout = findViewById(R.id.ivLogout);
         ivCodeGenerator = findViewById(R.id.ivCodeGenerator);
         classInfoLayout = findViewById(R.id.classInfoLayout);
         classTitle = findViewById(R.id.classTitle);
+        ivLogout.setOnClickListener(view -> {
+            FirebaseMessaging.getInstance().deleteToken();
+            sessionHelper.clearSession();
+            Intent openLogin=new Intent(admindashboard.this,Login.class);
+            startActivity(openLogin);
+            finish();
+        });
         ivCodeGenerator.setOnClickListener(view -> {
             generateClassKey();
         });
@@ -69,7 +83,20 @@ public class admindashboard extends AppCompatActivity {
             ComptutorApplication.Companion.setClassModel(classModel);
             startActivity(new Intent(this, ClassHomeActivity.class));
         });
+
         initFab();
+
+        if(sessionHelper.getStringValue(SessionHelper.FIREBASE_TOKEN).isEmpty()) {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override public void onComplete(@NonNull Task<String> task) {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+                    Log.d(TAG, ""+task.getResult());
+                }
+            });
+        }
     }
 
     private void initFab() {

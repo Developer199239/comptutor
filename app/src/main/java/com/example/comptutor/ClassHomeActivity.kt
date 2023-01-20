@@ -68,9 +68,9 @@ class ClassHomeActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 val studentsList: ArrayList<StudentModel> = ArrayList()
                 for (i in document.documents) {
-                    if(i.getString("isStudent") != null) {
-                        val product = i.toObject(StudentModel::class.java)!!
-                        product.studentId = i.id
+                    val product = i.toObject(StudentModel::class.java)!!
+                    if(product.role == "student") {
+                        product.userId = i.id
                         studentsList.add(product)
                     }
                 }

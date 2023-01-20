@@ -6,7 +6,7 @@ class AssignStudentModel(
     var isStudent: String = "0",
     var lastName: String = "",
     var lrn: String = "",
-    var studentId: String = "",
+    var userId: String = "",
     var isSelected: Boolean = false,
 )
 

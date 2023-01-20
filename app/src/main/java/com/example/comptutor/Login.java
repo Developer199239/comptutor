@@ -17,7 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.comptutor.utils.ClassModel;
 import com.example.comptutor.utils.SessionHelper;
+import com.example.comptutor.utils.StudentModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -135,13 +137,19 @@ public class Login extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Log.d("TAG","OnSuccess" + documentSnapshot.getData());
-                if(documentSnapshot.getString("isTeacher")!=null)
+                StudentModel studentModel = documentSnapshot.toObject(StudentModel.class);
+                if(studentModel.getRole().equals("teacher"))
                 {
+                    studentModel.setUserId(uid);
                     new SessionHelper(Login.this).setStringValue(SessionHelper.USER_ID, uid);
+                    new SessionHelper(Login.this).setLoginInfo(studentModel);
                     startActivity(new Intent(getApplicationContext(),admindashboard.class));
                 }
-                else if (documentSnapshot.getString("isStudent")!= null)
+                else if (studentModel.getRole().equals("student"))
                 {
+                    studentModel.setUserId(uid);
+                    new SessionHelper(Login.this).setStringValue(SessionHelper.USER_ID, uid);
+                    new SessionHelper(Login.this).setLoginInfo(studentModel);
                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
                 }
             }

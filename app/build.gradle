@@ -46,6 +46,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.3.1')
     implementation 'com.google.firebase:firebase-storage:20.0.1'
     implementation 'com.google.firebase:firebase-analytics:21.2.0'
+    implementation 'com.google.firebase:firebase-messaging:17.3.3'
 
 
     implementation 'androidx.navigation:navigation-fragment:2.4.1'
@@ -76,5 +77,6 @@ dependencies {
     //color picker
     implementation 'com.github.Dhaval2404:ColorPicker:2.3'
 
-
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '6.3.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }

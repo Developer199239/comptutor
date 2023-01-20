@@ -84,7 +84,7 @@ class AssignStudentDialog : DialogFragment() {
                         val selectedUsers = snapshot.getValue(AssignStudentResultSet::class.java)
                         val map = hashMapOf<String,String>()
                         selectedUsers!!.result.forEach {
-                            map[it.studentId] = it.studentId
+                            map[it.userId] = it.userId
                         }
                         showUserList(map)
                     }
@@ -108,9 +108,9 @@ class AssignStudentDialog : DialogFragment() {
                 firstName = it.firstName,
                 lastName = it.lastName,
                 lrn = it.lrn,
-                studentId = it.studentId
+                userId = it.userId
             )
-            if(selectedUsers.containsKey(it.studentId)) {
+            if(selectedUsers.containsKey(it.userId)) {
                 item.isSelected = true
             }
             studentsList.add(item)

@@ -34,26 +34,36 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class Login extends AppCompatActivity {
     private FirebaseAuth mauth;
     private FirebaseFirestore mStore;
-    private EditText mail,password;
+    private EditText mail, password;
     private Button loginBtn;
-    private TextView registerText,forgotPassword;
+    private TextView registerText, forgotPassword;
+    private SessionHelper sessionHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        sessionHelper = new SessionHelper(getApplicationContext());
+        StudentModel studentModel = sessionHelper.getLoginInfo();
+        if (!studentModel.getEmail().isEmpty()) {
+            if (studentModel.getRole().equals("teacher")) {
+                startActivity(new Intent(getApplicationContext(), admindashboard.class));
+                finish();
+            } else if (studentModel.getRole().equals("student")) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
+            }
+        }
 
-//        startActivity(new Intent(getApplicationContext(),admindashboard.class));
-
-        mauth=FirebaseAuth.getInstance();
+        mauth = FirebaseAuth.getInstance();
         mStore = FirebaseFirestore.getInstance();
-        mail=findViewById(R.id.loginEmail);
-        password=findViewById(R.id.loginPassword);
-        loginBtn=findViewById(R.id.loginBtn);
-        registerText=findViewById(R.id.regTxt);
+        mail = findViewById(R.id.loginEmail);
+        password = findViewById(R.id.loginPassword);
+        loginBtn = findViewById(R.id.loginBtn);
+        registerText = findViewById(R.id.regTxt);
         forgotPassword = findViewById(R.id.forgotPassword);
 
-        loginBtn.setOnClickListener(new View.OnClickListener()
-        {
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 login();
@@ -63,7 +73,7 @@ public class Login extends AppCompatActivity {
         registerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Login.this,Register.class));
+                startActivity(new Intent(Login.this, Register.class));
             }
         });
         forgotPassword.setOnClickListener(new View.OnClickListener() {
@@ -81,12 +91,12 @@ public class Login extends AppCompatActivity {
                         mauth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(Login.this,"Reset Link Has been sent to your Email",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Reset Link Has been sent to your Email", Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception error) {
-                                Toast.makeText(Login.this,"Error Reset Link is Not Sent Please try Again"+error.getMessage(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Error Reset Link is Not Sent Please try Again" + error.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -104,6 +114,7 @@ public class Login extends AppCompatActivity {
         });
 
     }
+
     private void login() {
         String user = mail.getText().toString().trim();
         String pass = password.getText().toString().trim();
@@ -116,14 +127,11 @@ public class Login extends AppCompatActivity {
                 @Override
                 public void onSuccess(AuthResult authResult) {
                     FirebaseUser currentUser = mauth.getCurrentUser();
-                    if (currentUser != null && !currentUser.isEmailVerified())
-                    {
-                        Intent intent = new Intent(Login.this,Reverify.class);
+                    if (currentUser != null && !currentUser.isEmailVerified()) {
+                        Intent intent = new Intent(Login.this, Reverify.class);
                         startActivity(intent);
-                    }
-                    else
-                    {
-                        Toast.makeText(Login.this,"Login Successfully",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Login.this, "Login Successfully", Toast.LENGTH_SHORT).show();
                         checkUserLevel(authResult.getUser().getUid());
                     }
                 }
@@ -136,21 +144,18 @@ public class Login extends AppCompatActivity {
         documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                Log.d("TAG","OnSuccess" + documentSnapshot.getData());
+                Log.d("TAG", "OnSuccess" + documentSnapshot.getData());
                 StudentModel studentModel = documentSnapshot.toObject(StudentModel.class);
-                if(studentModel.getRole().equals("teacher"))
-                {
+                if (studentModel.getRole().equals("teacher")) {
                     studentModel.setUserId(uid);
                     new SessionHelper(Login.this).setStringValue(SessionHelper.USER_ID, uid);
                     new SessionHelper(Login.this).setLoginInfo(studentModel);
-                    startActivity(new Intent(getApplicationContext(),admindashboard.class));
-                }
-                else if (studentModel.getRole().equals("student"))
-                {
+                    startActivity(new Intent(getApplicationContext(), admindashboard.class));
+                } else if (studentModel.getRole().equals("student")) {
                     studentModel.setUserId(uid);
                     new SessionHelper(Login.this).setStringValue(SessionHelper.USER_ID, uid);
                     new SessionHelper(Login.this).setLoginInfo(studentModel);
-                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 }
             }
         });

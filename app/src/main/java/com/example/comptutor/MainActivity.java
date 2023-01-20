@@ -30,8 +30,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
+import com.example.comptutor.utils.ComptutorApplication;
+import com.example.comptutor.utils.SessionHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -143,7 +147,24 @@ public class MainActivity extends AppCompatActivity {
             Intent openLogin = new Intent(MainActivity.this,Login.class);
             startActivity(openLogin);
         }
+
+        if(new SessionHelper(getApplication()).getStringValue(SessionHelper.FIREBASE_TOKEN).isEmpty()) {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override public void onComplete(@NonNull Task<String> task) {
+                    if (!task.isSuccessful()) {
+                        return;
+                    }
+                }
+            });
+        }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ComptutorApplication.Companion.uploadTokenInServer();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

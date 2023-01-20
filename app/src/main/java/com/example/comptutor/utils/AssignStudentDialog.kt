@@ -1,6 +1,7 @@
 package com.example.comptutor.utils
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.comptutor.databinding.DialogAssignStudentBinding
 import com.google.firebase.database.*
+import com.google.gson.Gson
+import com.pubnub.api.callbacks.PNCallback
+import com.pubnub.api.models.consumer.PNPublishResult
+import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
+import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper.FCMPayload
 
 class AssignStudentDialog : DialogFragment() {
     private var _binding: DialogAssignStudentBinding? = null
@@ -60,9 +66,7 @@ class AssignStudentDialog : DialogFragment() {
             materialProgress.show()
             val databaseReference = FirebaseDatabase.getInstance().reference
             databaseReference.child(AppConstants.ASSIGN_STUDENT_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID)).setValue(item).addOnSuccessListener {
-                materialProgress.dismiss()
-                "Success".toast(requireContext())
-                dismiss()
+                sendNotification(selectedStudent)
             }.addOnFailureListener {
                 materialProgress.dismiss()
                 "Failed due to: ${it.message}".toast(requireContext())
@@ -70,6 +74,60 @@ class AssignStudentDialog : DialogFragment() {
 
         }
         bindStudentList()
+    }
+
+    private fun getPnExceptionsList(selectedStudent: ArrayList<AssignStudentModel>): ArrayList<String> {
+        val selectStudentMap = hashMapOf<String, String>()
+        selectedStudent.forEach {
+            selectStudentMap[it.userId] = it.userId
+        }
+        val pnTokenList = arrayListOf<String>()
+        ComptutorApplication.studentsList.forEach {
+            if(!selectStudentMap.containsKey(it.userId)) {
+                pnTokenList.add(it.token)
+            }
+        }
+        pnTokenList.add(sessionHelper.getLoginInfo().token)
+        return pnTokenList
+    }
+    private fun sendNotification(selectedStudent: ArrayList<AssignStudentModel>) {
+        val studentModel = sessionHelper.getLoginInfo()
+        val pushPayloadHelper = PushPayloadHelper()
+        val fcmPayload = FCMPayload()
+        val payload: MutableMap<String, Any> = HashMap()
+        payload["pn_exceptions"] = getPnExceptionsList(selectedStudent)
+//        val gson = Gson()
+//        val student: com.example.pubnubdemo.Student = com.example.pubnubdemo.Student()
+//        student.setId(1)
+//        student.setName("students")
+//        payload["android:data"] = gson.toJson(student)
+        fcmPayload.setCustom(payload)
+        val fcmNotification = FCMPayload.Notification()
+            .setTitle("Invitation To Join Class")
+            .setBody(studentModel.firstName+" invited you to join class")
+        fcmPayload.setNotification(fcmNotification)
+        val data: MutableMap<String, Any> = java.util.HashMap()
+//        data["data"] = gson.toJson(student)
+        fcmPayload.setData(data)
+        pushPayloadHelper.setFcmPayload(fcmPayload)
+        val commonPayload: MutableMap<String, Any> = HashMap()
+        commonPayload["text"] = studentModel.firstName+" invited you to join class"
+        pushPayloadHelper.setCommonPayload(commonPayload)
+        val pushPayload = pushPayloadHelper.build()
+        ComptutorApplication.pubnub!!.publish()
+            .channel(AppConstants.PUB_SUB_CHANNEL)
+            .message(pushPayload)
+            .async(PNCallback<PNPublishResult?> { result, status ->
+                Log.d(
+                    "PUBNUB",
+                    "-->PNStatus.getStatusCode = " + status.statusCode
+                )
+                materialProgress.dismiss()
+                "Success".toast(requireContext())
+                dismiss()
+            }
+
+            )
     }
 
     private fun bindStudentList() {
@@ -87,6 +145,8 @@ class AssignStudentDialog : DialogFragment() {
                             map[it.userId] = it.userId
                         }
                         showUserList(map)
+                    } else {
+                        showUserList(hashMapOf())
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {

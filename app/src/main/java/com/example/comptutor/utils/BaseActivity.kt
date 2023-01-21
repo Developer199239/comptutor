@@ -1,9 +1,9 @@
 package com.example.comptutor.utils
 
-import android.content.DialogInterface
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.comptutor.utils.EmbeddVideoLinkPlayDialog.Companion.newInstance
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -96,7 +96,9 @@ open class BaseActivity : AppCompatActivity() {
                     materialProgress.dismiss()
                     if(snapshot.value != null) {
                         val videoLinkModel = snapshot.getValue(VideoLinkModel::class.java)!!
-                        "Found".toast(this@BaseActivity)
+                        val assignStudentDialog = newInstance()
+                        assignStudentDialog.isCancelable = false
+                        assignStudentDialog.show(supportFragmentManager, "")
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {
@@ -108,5 +110,17 @@ open class BaseActivity : AppCompatActivity() {
                     ).show()
                 }
             })
+    }
+
+     fun showAlertForVideoWatchingFinish() {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("Info")
+        builder.setMessage("Did you finish video?")
+        builder.setPositiveButton("Yes") { dialog, which ->
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+        }
+        builder.show()
     }
 }

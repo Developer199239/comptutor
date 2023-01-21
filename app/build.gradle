@@ -80,4 +80,6 @@ dependencies {
     implementation group: 'com.pubnub', name: 'pubnub-gson', version: '6.3.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation("org.greenrobot:eventbus:3.3.1")
+
+    implementation "com.airbnb.android:lottie:5.2.0"
 }

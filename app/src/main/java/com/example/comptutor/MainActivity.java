@@ -32,6 +32,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -177,14 +179,22 @@ public class MainActivity extends BaseActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     ArrayList<String> pnTokenList = new ArrayList<>();
+                    StudentModel teacherModel = null;
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         StudentModel studentModel = document.toObject(StudentModel.class);
-                        if(studentModel.getRole() != AppConstants.ROLE_TEACHER) {
+                        if(studentModel.getRole().equals(AppConstants.ROLE_STUDENT)) {
                             pnTokenList.add(studentModel.getToken());
+                        } else if(studentModel.getRole().equals(AppConstants.ROLE_TEACHER)){
+                            teacherModel = studentModel;
                         }
                     }
+                    if(teacherModel == null) {
+                        materialProgress.dismiss();
+                        Toast.makeText(MainActivity.this,"Teacher not found", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     pnTokenList.add(sessionHelper.getLoginInfo().getToken());
-                    sendCodeRequestPush(pnTokenList);
+                    sendCodeRequestPush(pnTokenList, teacherModel);
                 } else {
                     materialProgress.dismiss();
                     Toast.makeText(MainActivity.this, "Failed to load user list",Toast.LENGTH_LONG).show();
@@ -193,7 +203,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void sendCodeRequestPush(ArrayList<String> pnTokenList){
+    private void sendCodeRequestPush(ArrayList<String> pnTokenList, StudentModel teacherModel){
         PushPayloadHelper pushPayloadHelper = new PushPayloadHelper();
         StudentModel loggedInUserModel = sessionHelper.getLoginInfo();
         PushPayloadHelper.FCMPayload fcmPayload = new PushPayloadHelper.FCMPayload();
@@ -205,7 +215,7 @@ public class MainActivity extends BaseActivity {
                         .setBody(loggedInUserModel.getFirstName()+" Request for code");
         fcmPayload.setNotification(fcmNotification);
         Map<String, Object> data = new HashMap<>();
-        PushInfoModel pushInfoModel = new PushInfoModel(AppConstants.PUSH_TYPE_REQUEST_CODE, new Gson().toJson(loggedInUserModel));
+        PushInfoModel pushInfoModel = new PushInfoModel(AppConstants.PUSH_TYPE_REQUEST_CODE, new Gson().toJson(loggedInUserModel),"");
         data.put("data",pushInfoModel);
         fcmPayload.setData(data);
         pushPayloadHelper.setFcmPayload(fcmPayload);
@@ -223,9 +233,32 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onResponse(PNPublishResult result, PNStatus status) {
                         Log.d("PUBNUB", "-->PNStatus.getStatusCode = " + status.getStatusCode());
-                        materialProgress.dismiss();
+                        if(status.getStatusCode() == 200) {
+                           saveNotification(pushInfoModel,teacherModel);
+                        } else {
+                            materialProgress.dismiss();
+                            Toast.makeText(MainActivity.this, "Failed to send push notification", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
+    }
+
+    private void saveNotification(PushInfoModel pushInfoModel, StudentModel teacherModel){
+        pushInfoModel.setNotificationId(sessionHelper.getLoginInfo().getUserId()+""+System.currentTimeMillis());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child(AppConstants.NOTIFICATION_TABLE).child(teacherModel.getUserId()).child(pushInfoModel.getNotificationId()).setValue(pushInfoModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                materialProgress.dismiss();
+                Toast.makeText(MainActivity.this, "Send Success", Toast.LENGTH_LONG).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                materialProgress.dismiss();
+                Toast.makeText(MainActivity.this, "Failed to save notification in db, dut to"+e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

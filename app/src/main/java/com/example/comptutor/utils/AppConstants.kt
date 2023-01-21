@@ -6,6 +6,7 @@ object AppConstants {
     const val GENERATE_KEY_TABLE = "generateKey"
     const val ASSIGN_STUDENT_TABLE = "assignStudent"
     const val VIDEO_LINK_TABLE = "videoLink"
+    const val NOTIFICATION_TABLE = "notification"
 
     const val PUB_SUB_CHANNEL = "TestPushChannel"
 

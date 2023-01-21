@@ -1,7 +1,10 @@
 package com.example.comptutor.utils;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 
+import com.example.comptutor.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -34,6 +37,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String data = dataMap.get("data");
 
             EventBus.getDefault().post(new NotificationEvent(data));
+
+            MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.blip);
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mPlayer.start();
         }catch (Exception e) {
 
         }

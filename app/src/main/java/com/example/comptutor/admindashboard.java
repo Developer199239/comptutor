@@ -22,6 +22,7 @@ import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.GenerateKeyModel;
 import com.example.comptutor.utils.MaterialProgress;
 import com.example.comptutor.utils.NotificationReloadEvent;
+import com.example.comptutor.utils.PushNotificationResultSet;
 import com.example.comptutor.utils.SessionHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -65,18 +66,17 @@ public class admindashboard extends BaseActivity {
         super.onResume();
         fetchData();
         ComptutorApplication.Companion.uploadTokenInServer();
+        getNotification();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -325,7 +325,20 @@ public class admindashboard extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(NotificationReloadEvent event) {
-
+    public void onPushNotificationResultSet(PushNotificationResultSet event) {
+        TextView tvBatchCount = findViewById(R.id.tvBatchCount);
+        if(event.getResult().size() == 0) {
+            tvBatchCount.setVisibility(View.GONE);
+            return;
+        } else {
+            tvBatchCount.setVisibility(View.VISIBLE);
+        }
+        String batchCount = "";
+        if(event.getResult().size()>9) {
+            batchCount = "9+";
+        }else {
+            batchCount = "0"+event.getResult().size();
+        }
+        tvBatchCount.setText(batchCount);
     }
 }

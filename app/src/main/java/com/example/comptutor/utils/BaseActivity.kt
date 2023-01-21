@@ -4,10 +4,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.comptutor.utils.EmbeddVideoLinkPlayDialog.Companion.newInstance
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.gson.Gson
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -41,10 +38,31 @@ open class BaseActivity : AppCompatActivity() {
        } else if(sessionHelper.getLoginInfo().role == AppConstants.ROLE_TEACHER) {
            val pushInfoModel = Gson().fromJson(event!!.data, PushInfoModel::class.java)
            if(pushInfoModel.pushType == AppConstants.PUSH_TYPE_REQUEST_CODE) {
-               EventBus.getDefault().post(NotificationReloadEvent(true))
+               getNotification()
            }
        }
     }
+
+     fun getNotification() {
+        val reference = FirebaseDatabase.getInstance().reference
+        reference.child(AppConstants.NOTIFICATION_TABLE).child(sessionHelper.getLoginInfo().userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var pushNotificationResultSet: PushNotificationResultSet? =
+                        PushNotificationResultSet()
+                    if (snapshot.value != null) {
+                        pushNotificationResultSet = snapshot.getValue(
+                            PushNotificationResultSet::class.java
+                        )
+                    }
+                    EventBus.getDefault().post(pushNotificationResultSet)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
     private fun showAlertForAssignStudent(assignClassPushModel: AssignClassPushModel) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Invitation To Join Class")

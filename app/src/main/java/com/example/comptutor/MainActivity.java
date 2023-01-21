@@ -24,6 +24,7 @@ import com.example.comptutor.utils.BaseActivity;
 import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.MaterialProgress;
 import com.example.comptutor.utils.PushInfoModel;
+import com.example.comptutor.utils.PushNotificationResultSet;
 import com.example.comptutor.utils.SessionHelper;
 import com.example.comptutor.utils.StudentModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,8 +33,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -234,7 +238,7 @@ public class MainActivity extends BaseActivity {
                     public void onResponse(PNPublishResult result, PNStatus status) {
                         Log.d("PUBNUB", "-->PNStatus.getStatusCode = " + status.getStatusCode());
                         if(status.getStatusCode() == 200) {
-                           saveNotification(pushInfoModel,teacherModel);
+                            getNotification(pushInfoModel,teacherModel);
                         } else {
                             materialProgress.dismiss();
                             Toast.makeText(MainActivity.this, "Failed to send push notification", Toast.LENGTH_LONG).show();
@@ -243,20 +247,40 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
-    private void saveNotification(PushInfoModel pushInfoModel, StudentModel teacherModel){
+    private void getNotification(PushInfoModel pushInfoModel, StudentModel teacherModel){
         pushInfoModel.setNotificationId(sessionHelper.getLoginInfo().getUserId()+""+System.currentTimeMillis());
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child(AppConstants.NOTIFICATION_TABLE).child(teacherModel.getUserId()).child(pushInfoModel.getNotificationId()).setValue(pushInfoModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+        reference.child(AppConstants.NOTIFICATION_TABLE).child(teacherModel.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                PushNotificationResultSet pushNotificationResultSet = new PushNotificationResultSet();
+                if (snapshot.getValue() != null) {
+                    pushNotificationResultSet = snapshot.getValue(PushNotificationResultSet.class);
+                }
+                pushNotificationResultSet.getResult().add(pushInfoModel);
+                saveNotification(pushNotificationResultSet, teacherModel);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                materialProgress.dismiss();
+                Toast.makeText(MainActivity.this, "Getting error, due to: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveNotification(PushNotificationResultSet pushNotificationResultSet, StudentModel teacherModel){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child(AppConstants.NOTIFICATION_TABLE).child(teacherModel.getUserId()).setValue(pushNotificationResultSet).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 materialProgress.dismiss();
-                Toast.makeText(MainActivity.this, "Send Success", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Send Success" , Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 materialProgress.dismiss();
-                Toast.makeText(MainActivity.this, "Failed to save notification in db, dut to"+e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Getting error, due to: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

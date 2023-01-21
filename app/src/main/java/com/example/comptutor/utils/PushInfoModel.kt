@@ -5,3 +5,7 @@ class PushInfoModel(
     var pushBody: String = "",
     var notificationId: String = "",
 )
+
+class PushNotificationResultSet(
+    var result : ArrayList<PushInfoModel> = arrayListOf()
+)

@@ -38,9 +38,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             EventBus.getDefault().post(new NotificationEvent(data));
 
-            MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.blip);
-            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mPlayer.start();
+            SessionHelper sessionHelper = new SessionHelper(getApplicationContext());
+            if(sessionHelper.getLoginInfo().getRole() == AppConstants.ROLE_TEACHER) {
+                MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.blip);
+                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mPlayer.start();
+            }
         }catch (Exception e) {
 
         }

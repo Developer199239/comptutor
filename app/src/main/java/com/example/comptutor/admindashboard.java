@@ -21,6 +21,7 @@ import com.example.comptutor.utils.ClassModel;
 import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.GenerateKeyModel;
 import com.example.comptutor.utils.MaterialProgress;
+import com.example.comptutor.utils.NotificationDialog;
 import com.example.comptutor.utils.NotificationReloadEvent;
 import com.example.comptutor.utils.PushNotificationResultSet;
 import com.example.comptutor.utils.SessionHelper;
@@ -52,7 +53,7 @@ public class admindashboard extends BaseActivity {
     private ConstraintLayout classInfoLayout;
     private TextView classTitle;
     private ClassModel classModel;
-    private ImageView ivCodeGenerator, ivLogout;
+    private ImageView ivCodeGenerator, ivLogout, ivNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class admindashboard extends BaseActivity {
         sessionHelper = new SessionHelper(getApplicationContext());
         ivLogout = findViewById(R.id.ivLogout);
         ivCodeGenerator = findViewById(R.id.ivCodeGenerator);
+        ivNotification = findViewById(R.id.ivNotification);
         classInfoLayout = findViewById(R.id.classInfoLayout);
         classTitle = findViewById(R.id.classTitle);
         ivLogout.setOnClickListener(view -> {
@@ -100,6 +102,11 @@ public class admindashboard extends BaseActivity {
         classInfoLayout.setOnClickListener(view -> {
             ComptutorApplication.Companion.setClassModel(classModel);
             startActivity(new Intent(this, ClassHomeActivity.class));
+        });
+        ivNotification.setOnClickListener(view -> {
+            NotificationDialog notificationDialog = NotificationDialog.newInstance();
+            notificationDialog.setCancelable(false);
+            notificationDialog.show(getSupportFragmentManager(), "NotificationDialog");
         });
 
         initFab();

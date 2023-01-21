@@ -16,10 +16,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.example.comptutor.utils.AppConstants;
+import com.example.comptutor.utils.BaseActivity;
 import com.example.comptutor.utils.ClassModel;
 import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.GenerateKeyModel;
 import com.example.comptutor.utils.MaterialProgress;
+import com.example.comptutor.utils.NotificationReloadEvent;
 import com.example.comptutor.utils.SessionHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,7 +36,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-public class admindashboard extends AppCompatActivity {
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+public class admindashboard extends BaseActivity {
     String TAG  = "admindashboard";
     FloatingActionButton mAddFab, addNewClassFab, deleteClassFab;
     TextView addNewClassFabText, deleteClassFabText;
@@ -59,6 +65,18 @@ public class admindashboard extends AppCompatActivity {
         super.onResume();
         fetchData();
         ComptutorApplication.Companion.uploadTokenInServer();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -304,5 +322,10 @@ public class admindashboard extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NotificationReloadEvent event) {
+
     }
 }

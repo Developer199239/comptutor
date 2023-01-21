@@ -39,7 +39,10 @@ open class BaseActivity : AppCompatActivity() {
                showAlertForAssignStudent(model)
            }
        } else if(sessionHelper.getLoginInfo().role == AppConstants.ROLE_TEACHER) {
-
+           val pushInfoModel = Gson().fromJson(event!!.data, PushInfoModel::class.java)
+           if(pushInfoModel.pushType == AppConstants.PUSH_TYPE_REQUEST_CODE) {
+               EventBus.getDefault().post(NotificationReloadEvent(true))
+           }
        }
     }
     private fun showAlertForAssignStudent(assignClassPushModel: AssignClassPushModel) {

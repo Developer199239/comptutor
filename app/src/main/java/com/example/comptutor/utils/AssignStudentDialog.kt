@@ -103,7 +103,14 @@ class AssignStudentDialog : DialogFragment() {
         fcmPayload.setNotification(fcmNotification)
         val data: MutableMap<String, Any> = HashMap()
         val gson = Gson()
-        val pushInfoModel = PushInfoModel(AppConstants.PUSH_TYPE_ASSIGN_STUDENT, ComptutorApplication.classModel)
+        val assignClassPushModel = AssignClassPushModel(
+            classId = ComptutorApplication.classModel.classId,
+            teacherId = ComptutorApplication.classModel.teacherId,
+            title = ComptutorApplication.classModel.title,
+            className = ComptutorApplication.classModel.className,
+            teacherName = studentModel.firstName,
+        )
+        val pushInfoModel = PushInfoModel(AppConstants.PUSH_TYPE_ASSIGN_STUDENT, gson.toJson(assignClassPushModel))
         data["data"] = gson.toJson(pushInfoModel)
         fcmPayload.setData(data)
         pushPayloadHelper.setFcmPayload(fcmPayload)

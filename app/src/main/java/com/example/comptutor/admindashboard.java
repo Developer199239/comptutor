@@ -198,6 +198,7 @@ public class admindashboard extends BaseActivity {
         classTitle.setText(classModel.getClassName());
         classInfoLayout.setVisibility(View.VISIBLE);
         isGenerateClassCode();
+        ComptutorApplication.Companion.setClassModel(classModel);
     }
 
     private void showToast(String message) {

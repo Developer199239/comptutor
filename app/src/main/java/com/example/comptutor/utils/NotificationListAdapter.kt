@@ -37,10 +37,10 @@ class NotificationListAdapter(
                    val model = Gson().fromJson(pushInfoModel.pushBody, StudentModel::class.java)
                    tvNotification.text = "${model.firstName} request for code"
                    btnSendCode.setOnClickListener {
-                       onItemClickListener.onItemClick(it, model, position)
+                       onItemClickListener.onItemClick(it, pushInfoModel, position)
                    }
                    btnRemove.setOnClickListener {
-                       onItemClickListener.onItemClick(it, model, position)
+                       onItemClickListener.onItemClick(it, pushInfoModel, position)
                    }
                }
 

@@ -1,14 +1,9 @@
 package com.example.comptutor.utils;
 
 public class NotificationEvent {
-    private Object payLoad;
+    private String data;
 
-    public NotificationEvent(Object payLoad) {
-        this.payLoad = payLoad;
+    public NotificationEvent(String data) {
+        this.data = data;
     }
-
-    public NotificationEvent() {
-    }
-
-
 }

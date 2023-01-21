@@ -1,6 +1,8 @@
 package com.example.comptutor.utils
 
 import android.content.DialogInterface
+import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.greenrobot.eventbus.EventBus
@@ -9,9 +11,11 @@ import org.greenrobot.eventbus.ThreadMode
 
 
 open class BaseActivity : AppCompatActivity() {
+    lateinit var sessionHelper: SessionHelper
 
     override fun onStart() {
         super.onStart()
+        sessionHelper = SessionHelper(applicationContext)
         EventBus.getDefault().register(this)
     }
 
@@ -22,7 +26,11 @@ open class BaseActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     open fun onMessageEvent(event: NotificationEvent?) {
-       showAlert()
+       if(sessionHelper.getLoginInfo().role == AppConstants.ROLE_STUDENT) {
+
+       } else if(sessionHelper.getLoginInfo().role == AppConstants.ROLE_TEACHER) {
+
+       }
     }
 
     private fun showAlert(){

@@ -7,6 +7,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Map;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseService";
     @Override
@@ -19,13 +21,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-//        Log.d(TAG, "From: " + remoteMessage.getFrom());
-//        if (remoteMessage.getData().size() > 0) {
-//            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-//        }
-//        if (remoteMessage.getNotification() != null) {
-//            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-//        }
-        EventBus.getDefault().post(new NotificationEvent());
+        try{
+            Log.d(TAG, "From: " + remoteMessage.getFrom());
+            if (remoteMessage.getData().size() > 0) {
+                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            }
+            if (remoteMessage.getNotification() != null) {
+                Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            }
+
+            Map<String, String> dataMap = remoteMessage.getData();
+            String data = dataMap.get("data");
+
+            EventBus.getDefault().post(new NotificationEvent(data));
+        }catch (Exception e) {
+
+        }
     }
 }

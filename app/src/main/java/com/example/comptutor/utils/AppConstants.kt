@@ -8,4 +8,10 @@ object AppConstants {
     const val VIDEO_LINK_TABLE = "videoLink"
 
     const val PUB_SUB_CHANNEL = "TestPushChannel"
+
+    const val ROLE_STUDENT = "student"
+    const val ROLE_TEACHER = "teacher"
+
+
+    const val PUSH_TYPE_ASSIGN_STUDENT = "assignStudent"
 }

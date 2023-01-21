@@ -35,6 +35,22 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_notification"
             app:tint="@color/tool_bar_icon" />
+        <TextView
+            android:id="@+id/tvBatchCount"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="01"
+            android:visibility="gone"
+            android:maxLines="1"
+            android:textColor="@color/red"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ivNotification"
+            app:layout_constraintHorizontal_bias="0.82"
+            app:layout_constraintStart_toStartOf="@+id/ivNotification"
+            app:layout_constraintTop_toTopOf="@+id/ivNotification"
+            app:layout_constraintVertical_bias="0.23000002" />
 
         <ImageView
             android:id="@+id/imageView6"

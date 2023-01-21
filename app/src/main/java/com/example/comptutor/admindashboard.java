@@ -100,8 +100,7 @@ public class admindashboard extends BaseActivity {
             generateClassKey();
         });
         classInfoLayout.setOnClickListener(view -> {
-            ComptutorApplication.Companion.setClassModel(classModel);
-            startActivity(new Intent(this, ClassHomeActivity.class));
+            isGenerateClassCode(true);
         });
         ivNotification.setOnClickListener(view -> {
             NotificationDialog notificationDialog = NotificationDialog.newInstance();
@@ -197,7 +196,7 @@ public class admindashboard extends BaseActivity {
     private void bindClassInfo(ClassModel classModel) {
         classTitle.setText(classModel.getClassName());
         classInfoLayout.setVisibility(View.VISIBLE);
-        isGenerateClassCode();
+        isGenerateClassCode(false);
         ComptutorApplication.Companion.setClassModel(classModel);
     }
 
@@ -299,6 +298,7 @@ public class admindashboard extends BaseActivity {
                     databaseReference.child(AppConstants.GENERATE_KEY_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID)).setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
+                            ivCodeGenerator.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(admindashboard.this, R.color.red)));
                             materialProgress.dismiss();
                             showToast("Code generate success");
                         }
@@ -317,12 +317,20 @@ public class admindashboard extends BaseActivity {
         });
     }
 
-    private void isGenerateClassCode() {
+    private void isGenerateClassCode(Boolean isChecked) {
         databaseReference.child(AppConstants.GENERATE_KEY_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
                     ivCodeGenerator.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(admindashboard.this, R.color.red)));
+                    if(isChecked) {
+                        ComptutorApplication.Companion.setClassModel(classModel);
+                        startActivity(new Intent(admindashboard.this, ClassHomeActivity.class));
+                    }
+                } else {
+                    if(isChecked) {
+                        showToast("Please generate class code");
+                    }
                 }
             }
 

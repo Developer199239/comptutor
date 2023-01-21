@@ -1,17 +1,20 @@
 package com.example.comptutor
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.comptutor.databinding.ActivityAddClassBinding
 import com.example.comptutor.databinding.ActivityClassHomeBinding
 import com.example.comptutor.utils.*
+import com.example.comptutor.utils.NotificationDialog.Companion.newInstance
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
-class ClassHomeActivity : AppCompatActivity() {
+class ClassHomeActivity : BaseActivity() {
     lateinit var binding: ActivityClassHomeBinding
     private lateinit var studentListAdapter: StudentListAdapter
     private lateinit var materialProgress: MaterialProgress
@@ -28,6 +31,7 @@ class ClassHomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         fetchStudentList()
+        getNotification()
     }
 
     private fun initView(){
@@ -39,6 +43,12 @@ class ClassHomeActivity : AppCompatActivity() {
 
         binding.ivBack.setOnClickListener {
             finish()
+        }
+
+        binding.ivNotification.setOnClickListener {
+            val notificationDialog = newInstance()
+            notificationDialog.isCancelable = false
+            notificationDialog.show(supportFragmentManager, "NotificationDialog")
         }
 
         binding.ivUser.setOnClickListener {
@@ -88,5 +98,23 @@ class ClassHomeActivity : AppCompatActivity() {
                 studentListAdapter.notifyDataSetChanged()
                 ComptutorApplication.studentsList.clear()
             }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPushNotificationResultSet(event: PushNotificationResultSet) {
+        val tvBatchCount = findViewById<TextView>(R.id.tvBatchCount)
+        if (event.result.size == 0) {
+            tvBatchCount.visibility = View.GONE
+            return
+        } else {
+            tvBatchCount.visibility = View.VISIBLE
+        }
+        var batchCount = ""
+        batchCount = if (event.result.size > 9) {
+            "9+"
+        } else {
+            "0" + event.result.size
+        }
+        tvBatchCount.text = batchCount
     }
 }

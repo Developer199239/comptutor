@@ -1,20 +1,12 @@
 package com.example.comptutor;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.FileNotFoundException;
 import java.lang.String;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,14 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
-import com.example.comptutor.utils.AssignStudentDialog;
+import com.example.comptutor.utils.AppConstants;
 import com.example.comptutor.utils.BaseActivity;
 import com.example.comptutor.utils.ComptutorApplication;
-import com.example.comptutor.utils.EmbeddVideoLinkPlayDialog;
+import com.example.comptutor.utils.MaterialProgress;
+import com.example.comptutor.utils.PushInfoModel;
 import com.example.comptutor.utils.SessionHelper;
+import com.example.comptutor.utils.StudentModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,15 +37,22 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.models.consumer.PNPublishResult;
+import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper;
 import com.squareup.picasso.Picasso;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
-import kotlin.math.UMathKt;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends BaseActivity {
     FirebaseAuth mauth;
@@ -65,11 +63,13 @@ public class MainActivity extends BaseActivity {
     private TextView userlastName,userGivenName,studLrn,userEmail;
     ImageView userAvatar;
     private ImageButton guideButton, hardwareButton, simulationButton;
+    private MaterialProgress materialProgress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+        materialProgress = new MaterialProgress(this);
         mauth = FirebaseAuth.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
         fdb = FirebaseFirestore.getInstance();
@@ -160,6 +160,72 @@ public class MainActivity extends BaseActivity {
                 }
             });
         }
+
+        findViewById(R.id.ivCodeGenerator).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fetchUserList();
+            }
+        });
+    }
+
+    private void fetchUserList(){
+        materialProgress.show();
+        FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
+        mFireStore.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> pnTokenList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        StudentModel studentModel = document.toObject(StudentModel.class);
+                        if(studentModel.getRole() != AppConstants.ROLE_TEACHER) {
+                            pnTokenList.add(studentModel.getToken());
+                        }
+                    }
+                    pnTokenList.add(sessionHelper.getLoginInfo().getToken());
+                    sendCodeRequestPush(pnTokenList);
+                } else {
+                    materialProgress.dismiss();
+                    Toast.makeText(MainActivity.this, "Failed to load user list",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void sendCodeRequestPush(ArrayList<String> pnTokenList){
+        PushPayloadHelper pushPayloadHelper = new PushPayloadHelper();
+        StudentModel loggedInUserModel = sessionHelper.getLoginInfo();
+        PushPayloadHelper.FCMPayload fcmPayload = new PushPayloadHelper.FCMPayload();
+        Map<String, Object> payload = new HashMap<>();
+        fcmPayload.setCustom(payload);
+        PushPayloadHelper.FCMPayload.Notification fcmNotification =
+                new PushPayloadHelper.FCMPayload.Notification()
+                        .setTitle("Request")
+                        .setBody(loggedInUserModel.getFirstName()+" Request for code");
+        fcmPayload.setNotification(fcmNotification);
+        Map<String, Object> data = new HashMap<>();
+        PushInfoModel pushInfoModel = new PushInfoModel(AppConstants.PUSH_TYPE_REQUEST_CODE, new Gson().toJson(loggedInUserModel));
+        data.put("data",pushInfoModel);
+        fcmPayload.setData(data);
+        pushPayloadHelper.setFcmPayload(fcmPayload);
+
+        Map<String, Object> commonPayload = new HashMap<>();
+        commonPayload.put("text", "Request");
+        commonPayload.put("text", loggedInUserModel.getFirstName()+" Request for code");
+        pushPayloadHelper.setCommonPayload(commonPayload);
+
+        Map<String, Object> pushPayload = pushPayloadHelper.build();
+        ComptutorApplication.Companion.getPubnub().publish()
+                .channel(AppConstants.PUB_SUB_CHANNEL)
+                .message(pushPayload)
+                .async(new PNCallback<PNPublishResult>() {
+                    @Override
+                    public void onResponse(PNPublishResult result, PNStatus status) {
+                        Log.d("PUBNUB", "-->PNStatus.getStatusCode = " + status.getStatusCode());
+                        materialProgress.dismiss();
+                    }
+                });
     }
 
     @Override

@@ -14,4 +14,5 @@ object AppConstants {
 
 
     const val PUSH_TYPE_ASSIGN_STUDENT = "assignStudent"
+    const val PUSH_TYPE_REQUEST_CODE = "requestCode"
 }

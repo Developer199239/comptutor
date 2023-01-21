@@ -5,10 +5,50 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:context=".MainActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/black"
+        >
+
+        <ImageView
+            android:id="@+id/ivLogout"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_admin_logout" />
+
+        <TextView
+            android:id="@+id/tvEnterCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter Code"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCodeGenerator"
+            app:layout_constraintEnd_toStartOf="@+id/ivCodeGenerator"
+            app:layout_constraintTop_toTopOf="@+id/ivCodeGenerator" />
+
+        <ImageView
+            android:id="@+id/ivCodeGenerator"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_code_generator"
+            app:tint="@color/tool_bar_icon"
+            android:adjustViewBounds="true"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <RelativeLayout
+        android:layout_below="@id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="225dp"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true">
 
         <pl.droidsonroids.gif.GifImageButton
@@ -121,7 +161,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="499dp"
+        android:layout_height="450dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"

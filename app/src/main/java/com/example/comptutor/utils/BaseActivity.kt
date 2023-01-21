@@ -1,11 +1,17 @@
 package com.example.comptutor.utils
 
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.comptutor.utils.ComptutorApplication.Companion.pubnub
 import com.example.comptutor.utils.EmbeddVideoLinkPlayDialog.Companion.newInstance
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
+import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper.FCMPayload
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -139,9 +145,134 @@ open class BaseActivity : AppCompatActivity() {
         builder.setMessage("Did you finish video?")
         builder.setPositiveButton("Yes") { dialog, which ->
             dialog.dismiss()
+            requestCode()
         }
         builder.setNegativeButton("No") { dialog, which ->
         }
         builder.show()
     }
+
+    private  fun requestCode() {
+        materialProgress.show()
+        val mFireStore = FirebaseFirestore.getInstance()
+        mFireStore.collection("users").get().addOnCompleteListener(OnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val pnTokenList = ArrayList<String>()
+                var teacherModel: StudentModel? = null
+                for (document in task.result) {
+                    val studentModel = document.toObject(StudentModel::class.java)
+                    if (studentModel.role == AppConstants.ROLE_STUDENT) {
+                        pnTokenList.add(studentModel.token)
+                    } else if (studentModel.role == AppConstants.ROLE_TEACHER) {
+                        teacherModel = studentModel
+                    }
+                }
+                if (teacherModel == null) {
+                    materialProgress.dismiss()
+                    Toast.makeText(this@BaseActivity, "Teacher not found", Toast.LENGTH_LONG).show()
+                    return@OnCompleteListener
+                }
+                pnTokenList.add(sessionHelper.getLoginInfo().token)
+                sendCodeRequestPush(pnTokenList, teacherModel)
+            } else {
+                materialProgress.dismiss()
+                Toast.makeText(this@BaseActivity, "Failed to load user list", Toast.LENGTH_LONG)
+                    .show()
+            }
+        })
+    }
+
+    private fun sendCodeRequestPush(
+        pnTokenList: java.util.ArrayList<String>,
+        teacherModel: StudentModel
+    ) {
+        val pushPayloadHelper = PushPayloadHelper()
+        val loggedInUserModel = sessionHelper.getLoginInfo()
+        val fcmPayload = FCMPayload()
+        val payload: Map<String, Any> = HashMap()
+        fcmPayload.setCustom(payload)
+        val fcmNotification = FCMPayload.Notification()
+            .setTitle("Request")
+            .setBody(loggedInUserModel.firstName + " Request for code")
+        fcmPayload.setNotification(fcmNotification)
+        val data: MutableMap<String, Any> = HashMap()
+        val pushInfoModel =
+            PushInfoModel(AppConstants.PUSH_TYPE_REQUEST_CODE, Gson().toJson(loggedInUserModel), "")
+        data["data"] = pushInfoModel
+        fcmPayload.setData(data)
+        pushPayloadHelper.setFcmPayload(fcmPayload)
+        val commonPayload: MutableMap<String, Any> = HashMap()
+        commonPayload["text"] = "Request"
+        commonPayload["text"] = loggedInUserModel.firstName + " Request for code"
+        pushPayloadHelper.setCommonPayload(commonPayload)
+        val pushPayload = pushPayloadHelper.build()
+        pubnub!!.publish()
+            .channel(AppConstants.PUB_SUB_CHANNEL)
+            .message(pushPayload)
+            .async { result, status ->
+                Log.d("PUBNUB", "-->PNStatus.getStatusCode = " + status.statusCode)
+                if (status.statusCode == 200) {
+                    getNotification(pushInfoModel, teacherModel)
+                } else {
+                    materialProgress.dismiss()
+                    Toast.makeText(
+                        this@BaseActivity,
+                        "Failed to send push notification",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
+            }
+    }
+
+
+    private fun getNotification(pushInfoModel: PushInfoModel, teacherModel: StudentModel) {
+        pushInfoModel.notificationId =
+            sessionHelper.getLoginInfo().userId + "" + System.currentTimeMillis()
+        val reference = FirebaseDatabase.getInstance().reference
+        reference.child(AppConstants.NOTIFICATION_TABLE).child(teacherModel.userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var pushNotificationResultSet: PushNotificationResultSet? =
+                        PushNotificationResultSet()
+                    if (snapshot.value != null) {
+                        pushNotificationResultSet = snapshot.getValue(
+                            PushNotificationResultSet::class.java
+                        )
+                    }
+                    pushNotificationResultSet!!.result.add(pushInfoModel)
+                    saveNotification(pushNotificationResultSet, teacherModel)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    materialProgress.dismiss()
+                    Toast.makeText(
+                        this@BaseActivity,
+                        "Getting error, due to: " + error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+    }
+
+    private fun saveNotification(
+        pushNotificationResultSet: PushNotificationResultSet?,
+        teacherModel: StudentModel
+    ) {
+        val reference = FirebaseDatabase.getInstance().reference
+        reference.child(AppConstants.NOTIFICATION_TABLE).child(teacherModel.userId)
+            .setValue(pushNotificationResultSet).addOnSuccessListener {
+                materialProgress.dismiss()
+                Toast.makeText(this@BaseActivity, "Send Success", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { e ->
+                materialProgress.dismiss()
+                Toast.makeText(
+                    this@BaseActivity,
+                    "Getting error, due to: " + e.message,
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+    }
+
 }

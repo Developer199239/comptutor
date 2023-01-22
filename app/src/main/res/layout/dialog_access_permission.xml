@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:text="Assign Student"
+        android:text="Access Permission"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/ivCross"
         app:layout_constraintEnd_toStartOf="@+id/ivSave"

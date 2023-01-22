@@ -5,6 +5,7 @@ object AppConstants {
     const val CLASS_TABLE = "class"
     const val GENERATE_KEY_TABLE = "generateKey"
     const val ASSIGN_STUDENT_TABLE = "assignStudent"
+    const val ACCESS_PERMISSION_TABLE = "accessPermission"
     const val VIDEO_LINK_TABLE = "videoLink"
     const val NOTIFICATION_TABLE = "notification"
 
@@ -16,4 +17,5 @@ object AppConstants {
 
     const val PUSH_TYPE_ASSIGN_STUDENT = "assignStudent"
     const val PUSH_TYPE_REQUEST_CODE = "requestCode"
+    const val PUSH_TYPE_ACCESS_PERMISSION = "accessPermission"
 }

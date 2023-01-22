@@ -40,6 +40,9 @@ open class BaseActivity : AppCompatActivity() {
            if(pushInfoModel.pushType == AppConstants.PUSH_TYPE_ASSIGN_STUDENT) {
                val model =  Gson().fromJson(pushInfoModel.pushBody, AssignClassPushModel::class.java)
                showAlertForAssignStudent(model)
+           } else if(pushInfoModel.pushType == AppConstants.PUSH_TYPE_ACCESS_PERMISSION) {
+               val model =  Gson().fromJson(pushInfoModel.pushBody, AssignClassPushModel::class.java)
+               showAlertForVideoAccessPermission(model)
            }
        } else if(sessionHelper.getLoginInfo().role == AppConstants.ROLE_TEACHER) {
            val pushInfoModel = Gson().fromJson(event!!.data, PushInfoModel::class.java)
@@ -79,6 +82,18 @@ open class BaseActivity : AppCompatActivity() {
         }
         builder.setNegativeButton("Ignore") { dialog, which ->
         }
+        builder.show()
+    }
+
+    private fun showAlertForVideoAccessPermission(assignClassPushModel: AssignClassPushModel) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Access Permission")
+        builder.setMessage("${assignClassPushModel.teacherName} given video access permission")
+        builder.setNeutralButton("Ok") { dialog, which ->
+            dialog.dismiss()
+            joinClass(assignClassPushModel)
+        }
+
         builder.show()
     }
 

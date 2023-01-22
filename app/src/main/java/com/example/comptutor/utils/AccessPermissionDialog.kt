@@ -9,16 +9,17 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.comptutor.databinding.DialogAssignStudentBinding
+import com.example.comptutor.databinding.DialogAccessPermissionBinding
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.pubnub.api.callbacks.PNCallback
 import com.pubnub.api.models.consumer.PNPublishResult
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper.FCMPayload
 
-class AssignStudentDialog : DialogFragment() {
-    private var _binding: DialogAssignStudentBinding? = null
+class AccessPermissionDialog : DialogFragment() {
+    private var _binding: DialogAccessPermissionBinding? = null
     private val binding get() = _binding!!
     private lateinit var assignStudentListAdapter: AssignStudentListAdapter
     private lateinit var materialProgress: MaterialProgress
@@ -29,7 +30,7 @@ class AssignStudentDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogAssignStudentBinding.inflate(layoutInflater)
+        _binding = DialogAccessPermissionBinding.inflate(layoutInflater)
         initView()
         return binding.root
     }
@@ -57,21 +58,17 @@ class AssignStudentDialog : DialogFragment() {
         }
         binding.ivSave.setOnClickListener {
             val selectedStudent = assignStudentListAdapter.getSelectedUser()
-            if(selectedStudent.isEmpty()) {
-                "Select student for assign".toast(requireContext())
-                return@setOnClickListener
-            }
             val item = AssignStudentResultSet()
             item.result = selectedStudent
             materialProgress.show()
             val databaseReference = FirebaseDatabase.getInstance().reference
-            databaseReference.child(AppConstants.ASSIGN_STUDENT_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID)).setValue(item).addOnSuccessListener {
-                sendNotification(selectedStudent)
-            }.addOnFailureListener {
+            databaseReference.child(AppConstants.ACCESS_PERMISSION_TABLE).setValue(item)
+                .addOnSuccessListener {
+                    sendNotification(selectedStudent)
+                }.addOnFailureListener {
                 materialProgress.dismiss()
                 "Failed due to: ${it.message}".toast(requireContext())
             }
-
         }
         bindStudentList()
     }
@@ -83,13 +80,14 @@ class AssignStudentDialog : DialogFragment() {
         }
         val pnTokenList = arrayListOf<String>()
         ComptutorApplication.studentsList.forEach {
-            if(!selectStudentMap.containsKey(it.userId)) {
+            if (!selectStudentMap.containsKey(it.userId)) {
                 pnTokenList.add(it.token)
             }
         }
         pnTokenList.add(sessionHelper.getLoginInfo().token)
         return pnTokenList
     }
+
     private fun sendNotification(selectedStudent: ArrayList<AssignStudentModel>) {
         val studentModel = sessionHelper.getLoginInfo()
         val pushPayloadHelper = PushPayloadHelper()
@@ -98,8 +96,8 @@ class AssignStudentDialog : DialogFragment() {
         payload["pn_exceptions"] = getPnExceptionsList(selectedStudent)
         fcmPayload.setCustom(payload)
         val fcmNotification = FCMPayload.Notification()
-            .setTitle("Invitation To Join Class")
-            .setBody(studentModel.firstName+" invited you to join class")
+            .setTitle("Access Permission")
+            .setBody(studentModel.firstName + " given access permission to access video")
         fcmPayload.setNotification(fcmNotification)
         val data: MutableMap<String, Any> = HashMap()
         val gson = Gson()
@@ -110,12 +108,15 @@ class AssignStudentDialog : DialogFragment() {
             className = ComptutorApplication.classModel.className,
             teacherName = studentModel.firstName,
         )
-        val pushInfoModel = PushInfoModel(AppConstants.PUSH_TYPE_ASSIGN_STUDENT, gson.toJson(assignClassPushModel))
+        val pushInfoModel = PushInfoModel(
+            AppConstants.PUSH_TYPE_ACCESS_PERMISSION,
+            gson.toJson(assignClassPushModel)
+        )
         data["data"] = gson.toJson(pushInfoModel)
         fcmPayload.setData(data)
         pushPayloadHelper.setFcmPayload(fcmPayload)
         val commonPayload: MutableMap<String, Any> = HashMap()
-        commonPayload["text"] = studentModel.firstName+" invited you to join class"
+        commonPayload["text"] = studentModel.firstName + " given access permission to access video"
         pushPayloadHelper.setCommonPayload(commonPayload)
         val pushPayload = pushPayloadHelper.build()
         ComptutorApplication.pubnub!!.publish()
@@ -137,14 +138,12 @@ class AssignStudentDialog : DialogFragment() {
     private fun bindStudentList() {
         materialProgress.show()
         val databaseReference = FirebaseDatabase.getInstance().reference
-        databaseReference.child(AppConstants.ASSIGN_STUDENT_TABLE)
-            .child(sessionHelper.getStringValue(SessionHelper.USER_ID))
+        databaseReference.child(AppConstants.ACCESS_PERMISSION_TABLE)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    materialProgress.dismiss()
-                    if(snapshot.value != null) {
+                    if (snapshot.value != null) {
                         val selectedUsers = snapshot.getValue(AssignStudentResultSet::class.java)
-                        val map = hashMapOf<String,String>()
+                        val map = hashMapOf<String, String>()
                         selectedUsers!!.result.forEach {
                             map[it.userId] = it.userId
                         }
@@ -153,6 +152,7 @@ class AssignStudentDialog : DialogFragment() {
                         showUserList(hashMapOf())
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {
                     materialProgress.dismiss()
                     Toast.makeText(
@@ -165,6 +165,30 @@ class AssignStudentDialog : DialogFragment() {
     }
 
     fun showUserList(selectedUsers: HashMap<String, String>) {
+        val mFireStore = FirebaseFirestore.getInstance()
+        mFireStore.collection("users")
+            .get()
+            .addOnSuccessListener { document ->
+                val studentsList: ArrayList<StudentModel> = ArrayList()
+                for (i in document.documents) {
+                    val product = i.toObject(StudentModel::class.java)!!
+                    if (product.role == "student") {
+                        product.userId = i.id
+                        studentsList.add(product)
+                    }
+                }
+                ComptutorApplication.studentsList = studentsList
+                bindStudentList(selectedUsers)
+            }
+            .addOnFailureListener { e ->
+                materialProgress.dismiss()
+                e.message!!.toast(requireContext())
+                ComptutorApplication.studentsList.clear()
+                bindStudentList(selectedUsers)
+            }
+    }
+
+    private fun bindStudentList(selectedUsers: HashMap<String, String>) {
         val studentsList: ArrayList<AssignStudentModel> = ArrayList()
         ComptutorApplication.studentsList.forEach {
             val item = AssignStudentModel(
@@ -174,7 +198,7 @@ class AssignStudentDialog : DialogFragment() {
                 lrn = it.lrn,
                 userId = it.userId
             )
-            if(selectedUsers.containsKey(it.userId)) {
+            if (selectedUsers.containsKey(it.userId)) {
                 item.isSelected = true
             }
             studentsList.add(item)
@@ -182,13 +206,14 @@ class AssignStudentDialog : DialogFragment() {
         assignStudentListAdapter = AssignStudentListAdapter(studentsList)
         binding.rvStudent.adapter = assignStudentListAdapter
         assignStudentListAdapter.notifyDataSetChanged()
+        materialProgress.dismiss()
     }
 
     companion object {
         @JvmStatic
         fun newInstance(
         ) =
-            AssignStudentDialog().apply {
+            AccessPermissionDialog().apply {
                 arguments = Bundle().apply {
 
                 }

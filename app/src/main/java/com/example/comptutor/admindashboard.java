@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import com.example.comptutor.utils.AccessPermissionDialog;
 import com.example.comptutor.utils.AppConstants;
 import com.example.comptutor.utils.BaseActivity;
 import com.example.comptutor.utils.ClassModel;
@@ -51,7 +52,7 @@ public class admindashboard extends BaseActivity {
     private SessionHelper sessionHelper;
     DatabaseReference databaseReference;
     private ConstraintLayout classInfoLayout;
-    private TextView classTitle;
+    private TextView classTitle, tvAccessPermission;
     private ClassModel classModel;
     private ImageView ivCodeGenerator, ivLogout, ivNotification;
 
@@ -89,6 +90,7 @@ public class admindashboard extends BaseActivity {
         ivNotification = findViewById(R.id.ivNotification);
         classInfoLayout = findViewById(R.id.classInfoLayout);
         classTitle = findViewById(R.id.classTitle);
+        tvAccessPermission = findViewById(R.id.tvAccessPermission);
         ivLogout.setOnClickListener(view -> {
             FirebaseMessaging.getInstance().deleteToken();
             sessionHelper.clearSession();
@@ -108,6 +110,11 @@ public class admindashboard extends BaseActivity {
             notificationDialog.show(getSupportFragmentManager(), "NotificationDialog");
         });
 
+        tvAccessPermission.setOnClickListener(view -> {
+            AccessPermissionDialog accessPermissionDialog = AccessPermissionDialog.newInstance();
+            accessPermissionDialog.setCancelable(false);
+            accessPermissionDialog.show(getSupportFragmentManager(), "AccessPermissionDialog");
+        });
         initFab();
 
         if(sessionHelper.getStringValue(SessionHelper.FIREBASE_TOKEN).isEmpty()) {

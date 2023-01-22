@@ -187,7 +187,9 @@
             android:textColor="@color/black"
             android:backgroundTint="@color/grey"
             android:layout_marginBottom="19dp"
-            android:text="LOGOUT" />
+            android:text="LOGOUT"
+            android:visibility="gone"
+            />
 
         <ImageButton
             android:id="@+id/guideBtn"

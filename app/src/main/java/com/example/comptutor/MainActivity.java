@@ -129,7 +129,7 @@ public class MainActivity extends BaseActivity {
                 }
             });
         }
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.ivLogout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String token = sessionHelper.getStringValue(SessionHelper.FIREBASE_TOKEN);
@@ -141,7 +141,8 @@ public class MainActivity extends BaseActivity {
                             @Override
                             public void onResponse(PNPushRemoveChannelResult result, PNStatus status) {
                                 FirebaseMessaging.getInstance().deleteToken();
-                                mauth.signOut();
+//                                mauth.signOut();
+                                sessionHelper.clearSession();
                                 Intent openLogin = new Intent(MainActivity.this,Login.class);
                                 startActivity(openLogin);
                             }

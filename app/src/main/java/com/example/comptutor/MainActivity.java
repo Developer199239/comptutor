@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity {
     String userID;
     StorageReference storageRef;
     private Button logoutBtn;
-    private TextView userlastName,userGivenName,studLrn,userEmail;
+    private TextView userlastName,userGivenName,studLrn,userEmail, tvVideoAccessPermission;
     ImageView userAvatar;
     private ImageButton guideButton, hardwareButton, simulationButton;
     private MaterialProgress materialProgress;
@@ -85,6 +85,7 @@ public class MainActivity extends BaseActivity {
         userlastName=findViewById(R.id.contlastName);
         userGivenName=findViewById(R.id.contgivenName);
         studLrn = findViewById(R.id.contstudentLRN);
+        tvVideoAccessPermission = findViewById(R.id.tvVideoAccessPermission);
 
 
         userAvatar=findViewById(R.id.userAvatar);
@@ -170,12 +171,19 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.ivCodeGenerator).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fetchUserList();
+                fetchUserList(false);
+            }
+        });
+
+        tvVideoAccessPermission.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fetchUserList(true);
             }
         });
     }
 
-    private void fetchUserList(){
+    private void fetchUserList(boolean reqForVideoAccess){
         materialProgress.show();
         FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
         mFireStore.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -198,7 +206,7 @@ public class MainActivity extends BaseActivity {
                         return;
                     }
                     pnTokenList.add(sessionHelper.getLoginInfo().getToken());
-                    sendCodeRequestPush(pnTokenList, teacherModel);
+                    sendCodeRequestPush(pnTokenList, teacherModel, reqForVideoAccess);
                 } else {
                     materialProgress.dismiss();
                     Toast.makeText(MainActivity.this, "Failed to load user list",Toast.LENGTH_LONG).show();
@@ -207,26 +215,40 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void sendCodeRequestPush(ArrayList<String> pnTokenList, StudentModel teacherModel){
+    private void sendCodeRequestPush(ArrayList<String> pnTokenList, StudentModel teacherModel, boolean reqForVideoAccess){
         PushPayloadHelper pushPayloadHelper = new PushPayloadHelper();
         StudentModel loggedInUserModel = sessionHelper.getLoginInfo();
         PushPayloadHelper.FCMPayload fcmPayload = new PushPayloadHelper.FCMPayload();
         Map<String, Object> payload = new HashMap<>();
+        payload.put("pn_exceptions", pnTokenList);
         fcmPayload.setCustom(payload);
         PushPayloadHelper.FCMPayload.Notification fcmNotification =
                 new PushPayloadHelper.FCMPayload.Notification()
                         .setTitle("Request")
                         .setBody(loggedInUserModel.getFirstName()+" Request for code");
+        if(reqForVideoAccess) {
+            fcmNotification =
+                    new PushPayloadHelper.FCMPayload.Notification()
+                            .setTitle("Request")
+                            .setBody(loggedInUserModel.getFirstName()+" Request for Video Access");
+        }
         fcmPayload.setNotification(fcmNotification);
         Map<String, Object> data = new HashMap<>();
         PushInfoModel pushInfoModel = new PushInfoModel(AppConstants.PUSH_TYPE_REQUEST_CODE, new Gson().toJson(loggedInUserModel),"");
+        if(reqForVideoAccess) {
+            pushInfoModel.setPushType(AppConstants.PUSH_TYPE_ACCESS_PERMISSION);
+        }
         data.put("data",pushInfoModel);
         fcmPayload.setData(data);
         pushPayloadHelper.setFcmPayload(fcmPayload);
 
         Map<String, Object> commonPayload = new HashMap<>();
         commonPayload.put("text", "Request");
-        commonPayload.put("text", loggedInUserModel.getFirstName()+" Request for code");
+        if(reqForVideoAccess) {
+            commonPayload.put("text", loggedInUserModel.getFirstName()+" Request for video");
+        } else {
+            commonPayload.put("text", loggedInUserModel.getFirstName()+" Request for code");
+        }
         pushPayloadHelper.setCommonPayload(commonPayload);
 
         Map<String, Object> pushPayload = pushPayloadHelper.build();

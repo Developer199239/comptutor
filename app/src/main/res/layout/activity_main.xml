@@ -23,10 +23,10 @@
             app:srcCompat="@drawable/ic_admin_logout" />
 
         <TextView
-            android:id="@+id/tvEnterCode"
+            android:id="@+id/tvVideoAccessPermission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter Code"
+            android:text="Video Access Permission"
             android:textColor="@color/white"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/ivCodeGenerator"

@@ -51,12 +51,15 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.enums.PNPushType;
 import com.pubnub.api.models.consumer.PNPublishResult;
 import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.push.PNPushRemoveChannelResult;
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -130,10 +133,20 @@ public class MainActivity extends BaseActivity {
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseMessaging.getInstance().deleteToken();
-                mauth.signOut();
-                Intent openLogin = new Intent(MainActivity.this,Login.class);
-                startActivity(openLogin);
+                String token = sessionHelper.getStringValue(SessionHelper.FIREBASE_TOKEN);
+                ComptutorApplication.Companion.getPubnub().removePushNotificationsFromChannels()
+                        .pushType(PNPushType.FCM)
+                        .deviceId(token)
+                        .channels(Arrays.asList(AppConstants.PUB_SUB_CHANNEL))
+                        .async(new PNCallback<PNPushRemoveChannelResult>() {
+                            @Override
+                            public void onResponse(PNPushRemoveChannelResult result, PNStatus status) {
+                                FirebaseMessaging.getInstance().deleteToken();
+                                mauth.signOut();
+                                Intent openLogin = new Intent(MainActivity.this,Login.class);
+                                startActivity(openLogin);
+                            }
+                        });
             }
         });
         userAvatar.setOnClickListener(new View.OnClickListener() {

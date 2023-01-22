@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.comptutor.R
+import com.github.dhaval2404.colorpicker.util.setVisibility
 import com.google.gson.Gson
 
 
@@ -30,6 +31,7 @@ class NotificationListAdapter(
         private val tvNotification = itemView.findViewById<TextView>(R.id.tvNotification)
         private val btnSendCode = itemView.findViewById<Button>(R.id.btnSendCode)
         private val btnRemove = itemView.findViewById<Button>(R.id.btnRemove)
+        private val btnAccessPermission = itemView.findViewById<Button>(R.id.btnAccessPermission)
 
         @SuppressLint("SetJavaScriptEnabled")
         fun bind(pushInfoModel: PushInfoModel) {
@@ -37,6 +39,17 @@ class NotificationListAdapter(
                    val model = Gson().fromJson(pushInfoModel.pushBody, StudentModel::class.java)
                    tvNotification.text = "${model.firstName} request for code"
                    btnSendCode.setOnClickListener {
+                       onItemClickListener.onItemClick(it, pushInfoModel, position)
+                   }
+                   btnRemove.setOnClickListener {
+                       onItemClickListener.onItemClick(it, pushInfoModel, position)
+                   }
+                   btnSendCode.visibility = View.VISIBLE
+               } else if(pushInfoModel.pushType == AppConstants.PUSH_TYPE_ACCESS_PERMISSION) {
+                   val model = Gson().fromJson(pushInfoModel.pushBody, StudentModel::class.java)
+                   tvNotification.text = "${model.firstName} request for video access"
+                   btnAccessPermission.visibility = View.VISIBLE
+                   btnAccessPermission.setOnClickListener {
                        onItemClickListener.onItemClick(it, pushInfoModel, position)
                    }
                    btnRemove.setOnClickListener {

@@ -77,10 +77,16 @@ class NotificationDialog : DialogFragment() {
                     }
                     notificationListAdapter = NotificationListAdapter(pushNotificationResultSet!!.result, object : OnItemClickListener {
                         override fun onItemClick(view: View, item: Any, position: Int) {
-                            if(view.id == R.id.btnSendCode) {
-                                getAssignStudentList(item as PushInfoModel)
-                            } else if(view.id == R.id.btnRemove) {
-                                removeNotification(item as PushInfoModel)
+                            when (view.id) {
+                                R.id.btnSendCode -> {
+                                    getAssignStudentList(item as PushInfoModel)
+                                }
+                                R.id.btnRemove -> {
+                                    removeNotification(item as PushInfoModel)
+                                }
+                                R.id.btnAccessPermission -> {
+                                    getVideoAccessStudentList(item as PushInfoModel)
+                                }
                             }
                         }
 
@@ -96,6 +102,56 @@ class NotificationDialog : DialogFragment() {
                 }
             })
     }
+
+    private fun getVideoAccessStudentList(pushInfoModel: PushInfoModel) {
+        val studentModel = Gson().fromJson(pushInfoModel.pushBody, StudentModel::class.java)
+        materialProgress.show()
+        val databaseReference = FirebaseDatabase.getInstance().reference
+        databaseReference.child(AppConstants.ACCESS_PERMISSION_TABLE)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value != null) {
+                        val selectedUsers = snapshot.getValue(AssignStudentResultSet::class.java)
+                        val map = hashMapOf<String, String>()
+                        selectedUsers!!.result.forEach {
+                            map[it.userId] = it.userId
+                        }
+                        val  row = AssignStudentModel(
+                            email = studentModel.email,
+                            firstName = studentModel.firstName,
+                            lastName = studentModel.lastName,
+                            lrn = studentModel.lrn,
+                            userId = studentModel.userId
+                        )
+                        if(!map.containsKey(studentModel.userId)) {
+                            selectedUsers.result.add(row)
+                        }
+                        saveVideoAccessStudentList(selectedUsers, pushInfoModel)
+                    } else {
+                        val  row = AssignStudentModel(
+                            email = studentModel.email,
+                            firstName = studentModel.firstName,
+                            lastName = studentModel.lastName,
+                            lrn = studentModel.lrn,
+                            userId = studentModel.userId
+                        )
+                        val resultSet = AssignStudentResultSet()
+                        resultSet.result.add(row)
+                        saveVideoAccessStudentList(resultSet, pushInfoModel)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    materialProgress.dismiss()
+                    Toast.makeText(
+                        requireContext(),
+                        "Getting error, due to: " + error.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+    }
+
 
     private fun getAssignStudentList(pushInfoModel: PushInfoModel) {
         val studentModel = Gson().fromJson(pushInfoModel.pushBody, StudentModel::class.java)
@@ -121,7 +177,7 @@ class NotificationDialog : DialogFragment() {
                         if(!map.containsKey(studentModel.userId)) {
                             selectedUsers.result.add(row)
                         }
-                        saveAssignStudent(selectedUsers, row, pushInfoModel)
+                        saveAssignStudent(selectedUsers, pushInfoModel)
                     } else {
                         val  row = AssignStudentModel(
                             email = studentModel.email,
@@ -132,7 +188,7 @@ class NotificationDialog : DialogFragment() {
                         )
                         val resultSet = AssignStudentResultSet()
                         resultSet.result.add(row)
-                        saveAssignStudent(resultSet, row, pushInfoModel)
+                        saveAssignStudent(resultSet, pushInfoModel)
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {
@@ -146,7 +202,17 @@ class NotificationDialog : DialogFragment() {
             })
     }
 
-    private fun saveAssignStudent(resultSet: AssignStudentResultSet, selectedStudent: AssignStudentModel, pushInfoModel: PushInfoModel) {
+    private fun saveVideoAccessStudentList(resultSet: AssignStudentResultSet, pushInfoModel: PushInfoModel) {
+        val databaseReference = FirebaseDatabase.getInstance().reference
+        databaseReference.child(AppConstants.ACCESS_PERMISSION_TABLE).setValue(resultSet).addOnSuccessListener {
+            getAllStudents(pushInfoModel, true)
+        }.addOnFailureListener {
+            materialProgress.dismiss()
+            "Failed due to: ${it.message}".toast(requireContext())
+        }
+    }
+
+    private fun saveAssignStudent(resultSet: AssignStudentResultSet, pushInfoModel: PushInfoModel) {
         val databaseReference = FirebaseDatabase.getInstance().reference
         databaseReference.child(AppConstants.ASSIGN_STUDENT_TABLE).child(sessionHelper.getStringValue(SessionHelper.USER_ID)).setValue(resultSet).addOnSuccessListener {
             getAllStudents(pushInfoModel)
@@ -156,7 +222,8 @@ class NotificationDialog : DialogFragment() {
         }
     }
 
-    private fun getAllStudents(pushInfoModel: PushInfoModel) {
+    private fun getAllStudents(pushInfoModel: PushInfoModel, reqForVideoAccess: Boolean = false) {
+        val studentModel = Gson().fromJson(pushInfoModel.pushBody, StudentModel::class.java)
         val mFireStore = FirebaseFirestore.getInstance()
         mFireStore.collection("users")
             .get()
@@ -164,11 +231,14 @@ class NotificationDialog : DialogFragment() {
                 val tokensList: ArrayList<String> = ArrayList()
                 for (i in document.documents) {
                     val product = i.toObject(StudentModel::class.java)!!
-                    if(product.role != "student") {
+                    if(product.userId == studentModel.userId || product.userId == sessionHelper.getLoginInfo().userId) {
+                        Log.d("tag",product.firstName+""+studentModel.firstName)
+                    } else {
                         tokensList.add(product.token)
                     }
+
                 }
-                sendNotification(pushInfoModel, tokensList)
+                sendNotification(pushInfoModel, tokensList, reqForVideoAccess)
             }
             .addOnFailureListener { e ->
                 materialProgress.dismiss()
@@ -177,7 +247,8 @@ class NotificationDialog : DialogFragment() {
     }
     private fun sendNotification(
         _pushInfoModel: PushInfoModel,
-        pnExceptionsList: ArrayList<String>
+        pnExceptionsList: ArrayList<String>,
+        reqForVideoAccess: Boolean
     ) {
         val studentModel = sessionHelper.getLoginInfo()
         val pushPayloadHelper = PushPayloadHelper()
@@ -188,6 +259,11 @@ class NotificationDialog : DialogFragment() {
         val fcmNotification = PushPayloadHelper.FCMPayload.Notification()
             .setTitle("Invitation To Join Class")
             .setBody(studentModel.firstName+" invited you to join class")
+        if(reqForVideoAccess) {
+            PushPayloadHelper.FCMPayload.Notification()
+                .setTitle("Video Access")
+                .setBody(studentModel.firstName+" given video access permission")
+        }
         fcmPayload.setNotification(fcmNotification)
         val data: MutableMap<String, Any> = HashMap()
         val gson = Gson()
@@ -199,11 +275,18 @@ class NotificationDialog : DialogFragment() {
             teacherName = studentModel.firstName,
         )
         val pushInfoModel = PushInfoModel(AppConstants.PUSH_TYPE_ASSIGN_STUDENT, gson.toJson(assignClassPushModel))
+        if(reqForVideoAccess) {
+            pushInfoModel.pushType = AppConstants.PUSH_TYPE_ACCESS_PERMISSION
+        }
         data["data"] = gson.toJson(pushInfoModel)
         fcmPayload.setData(data)
         pushPayloadHelper.setFcmPayload(fcmPayload)
         val commonPayload: MutableMap<String, Any> = HashMap()
-        commonPayload["text"] = studentModel.firstName+" invited you to join class"
+        if(reqForVideoAccess) {
+            commonPayload["text"] = studentModel.firstName+" given video access permission"
+        }else {
+            commonPayload["text"] = studentModel.firstName+" invited you to join class"
+        }
         pushPayloadHelper.setCommonPayload(commonPayload)
         val pushPayload = pushPayloadHelper.build()
         ComptutorApplication.pubnub!!.publish()

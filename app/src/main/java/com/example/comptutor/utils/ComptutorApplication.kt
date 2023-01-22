@@ -34,7 +34,7 @@ class ComptutorApplication : Application(){
             sessionHelper.setStringValue(SessionHelper.FIREBASE_TOKEN, token)
             pubnub!!.addPushNotificationsOnChannels()
                 .pushType(PNPushType.GCM)
-                .channels(Arrays.asList(AppConstants.PUB_SUB_CHANNEL))
+                .channels(listOf(AppConstants.PUB_SUB_CHANNEL))
                 .deviceId(token)
                 .async { result: PNPushAddChannelResult?, status: PNStatus ->
                     Log.d(
@@ -47,7 +47,7 @@ class ComptutorApplication : Application(){
 
         fun uploadTokenInServer(){
             val sessionHelper = SessionHelper(instance)
-            if(sessionHelper.getLoginInfo().email.isEmpty()) {
+            if(sessionHelper.getLoginInfo().email.isEmpty() || sessionHelper.getStringValue(SessionHelper.FIREBASE_TOKEN).isEmpty()) {
                 return
             }
             if(sessionHelper.getStringValue(SessionHelper.UPLOAD_FIREBASE_TOKEN_SUCCESS).isEmpty()) {

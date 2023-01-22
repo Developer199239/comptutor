@@ -16,6 +16,7 @@ class EmbeddVideoLinkPlayDialog : DialogFragment() {
     private val binding get() = _binding!!
     private lateinit var materialProgress: MaterialProgress
     private lateinit var sessionHelper: SessionHelper
+    private var videoLink: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,16 +124,15 @@ class EmbeddVideoLinkPlayDialog : DialogFragment() {
             }
         }
         val playVideo =
-            "<html><body><iframe width=100%; height=100%; src=\"https://edpuzzle.com/embed/media/63c769449378414147cf8e51\" frameborder=\"0\" allowfullscreen></iframe></body></html>"
+            "<html><body><iframe width=100%; height=100%; src=\"${videoLink}\" frameborder=\"0\" allowfullscreen></iframe></body></html>"
         binding.webView.loadData(playVideo, "text/html", "utf-8")
     }
     companion object {
         @JvmStatic
-        fun newInstance(
-        ) =
+        fun newInstance(_videoLink: String) =
             EmbeddVideoLinkPlayDialog().apply {
                 arguments = Bundle().apply {
-
+                    videoLink = _videoLink
                 }
             }
     }

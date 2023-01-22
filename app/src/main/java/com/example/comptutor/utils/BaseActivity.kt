@@ -91,7 +91,6 @@ open class BaseActivity : AppCompatActivity() {
         builder.setMessage("${assignClassPushModel.teacherName} given video access permission")
         builder.setNeutralButton("Ok") { dialog, which ->
             dialog.dismiss()
-            joinClass(assignClassPushModel)
         }
 
         builder.show()
@@ -138,7 +137,7 @@ open class BaseActivity : AppCompatActivity() {
                     materialProgress.dismiss()
                     if(snapshot.value != null) {
                         val videoLinkModel = snapshot.getValue(VideoLinkModel::class.java)!!
-                        val assignStudentDialog = newInstance()
+                        val assignStudentDialog = newInstance(videoLinkModel.videoLink)
                         assignStudentDialog.isCancelable = false
                         assignStudentDialog.show(supportFragmentManager, "")
                     }

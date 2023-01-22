@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.comptutor.utils.AppConstants;
+import com.example.comptutor.utils.AssignStudentModel;
+import com.example.comptutor.utils.AssignStudentResultSet;
 import com.example.comptutor.utils.BaseActivity;
 import com.example.comptutor.utils.ComptutorApplication;
 import com.example.comptutor.utils.MaterialProgress;
@@ -96,24 +98,21 @@ public class MainActivity extends BaseActivity {
         hardwareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Intent openHardwarePage = new Intent(MainActivity.this,hardwarePage.class);
-               startActivity(openHardwarePage);
+                checkVideoAccessPermission("hardwareButton");
             }
         });
         guideButton = findViewById(R.id.guideBtn);
         guideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openGuide = new Intent(MainActivity.this,videoTutorialPage.class);
-                startActivity(openGuide);
+                checkVideoAccessPermission("guideButton");
             }
         });
         simulationButton = findViewById(R.id.simulationBtn);
         simulationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openSimunation= new Intent(MainActivity.this,pcAssemblyGuide.class);
-                startActivity(openSimunation);
+                checkVideoAccessPermission("simulationButton");
             }
         });
         if(mauth.getCurrentUser() != null){
@@ -364,5 +363,38 @@ public class MainActivity extends BaseActivity {
             Intent openLogin=new Intent(MainActivity.this,Login.class);
             startActivity(openLogin);
         }
+    }
+
+    private void checkVideoAccessPermission(String type){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child(AppConstants.ACCESS_PERMISSION_TABLE).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    String userId = sessionHelper.getLoginInfo().getUserId();
+                    AssignStudentResultSet  assignStudentResultSet = snapshot.getValue(AssignStudentResultSet.class);
+                    for(AssignStudentModel row : assignStudentResultSet.getResult()) {
+                        if(row.getUserId().equals(userId)) {
+                            if(type.equals("hardwareButton")) {
+                                Intent openHardwarePage = new Intent(MainActivity.this,hardwarePage.class);
+                                startActivity(openHardwarePage);
+                            } else if(type.equals("guideButton")){
+                                Intent openGuide = new Intent(MainActivity.this,videoTutorialPage.class);
+                                startActivity(openGuide);
+                            } else if(type.equals("simulationButton")){
+                                Intent openSimunation= new Intent(MainActivity.this,pcAssemblyGuide.class);
+                                startActivity(openSimunation);
+                            }
+                        }
+                    }
+                }
+                Toast.makeText(MainActivity.this,"You have no permission to access video", Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                materialProgress.dismiss();
+                Toast.makeText(MainActivity.this, "Getting error, due to: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

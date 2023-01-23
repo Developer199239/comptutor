@@ -69,8 +69,8 @@ class ComptutorApplication : Application(){
     private fun initPubnub() {
         try {
             val pnConfiguration = PNConfiguration(UUID.randomUUID().toString().substring(0, 5))
-            pnConfiguration.publishKey = "pub-c-06632ca1-cdca-4932-83a5-f05a8088e877"
-            pnConfiguration.subscribeKey = "sub-c-181d19e2-1a1e-4ba4-91fd-6ba54a4fc15f"
+            pnConfiguration.publishKey = AppConstants.PUBLISH_KEY
+            pnConfiguration.subscribeKey = AppConstants.SUBSCRIBE_KEY
             pnConfiguration.isSecure = true
             pubnub = PubNub(pnConfiguration)
         } catch (ex: Exception) {

@@ -18,4 +18,8 @@ object AppConstants {
     const val PUSH_TYPE_ASSIGN_STUDENT = "assignStudent"
     const val PUSH_TYPE_REQUEST_CODE = "requestCode"
     const val PUSH_TYPE_ACCESS_PERMISSION = "accessPermission"
+
+
+    const val PUBLISH_KEY = "pub-c-a1fd61c3-04cb-4f98-8c9c-23aa581698b3"
+    const val SUBSCRIBE_KEY = "sub-c-b8354ce3-a67e-4852-81cc-1e679f079116"
 }
